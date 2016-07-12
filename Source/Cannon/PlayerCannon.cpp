@@ -9,6 +9,8 @@ APlayerCannon::APlayerCannon()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	CamDir = FVector(0.0f, 0.0f, 0.0f);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -30,14 +32,12 @@ APlayerCannon::APlayerCannon()
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
 	CannonBody->SetStaticMesh(CannonBodyObject.Object);
-	// Qualquer coisa em qualquer lugar.
 
 }
 
 // Called when the game starts or when spawned
 void APlayerCannon::BeginPlay()
 {
-	CamDir = FVector(0.0f, 0.0f, 0.0f);
 	Super::BeginPlay();
 	
 }
@@ -73,6 +73,7 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 	Super::SetupPlayerInputComponent(InputComponent);
 	InputComponent->BindAxis("MoveZ", this, &APlayerCannon::MoveZ);
 	InputComponent->BindAxis("MoveY", this, &APlayerCannon::MoveY);
+	InputComponent->BindAxis("Zoom", this, &APlayerCannon::Zoom);
 	InputComponent->BindAxis("BarrelRotation", this, &APlayerCannon::MoveTurret);
 
 }
@@ -95,3 +96,8 @@ void APlayerCannon::MoveTurret(float AxisValue)
 
 }
 
+
+void APlayerCannon::Zoom(float AxisValue)
+{
+	CamDir.X = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
+}

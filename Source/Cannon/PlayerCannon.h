@@ -30,6 +30,7 @@ public:
 	void MoveZ(float AxisValue);
 	void MoveY(float AxisValue);
 	void MoveTurret(float AxisValue);
+	void Zoom(float AxisValue);
 
 	UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
