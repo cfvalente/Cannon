@@ -30,7 +30,7 @@ APlayerCannon::APlayerCannon()
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
 	CannonBody->SetStaticMesh(CannonBodyObject.Object);
-
+	// Qualquer coisa em qualquer lugar.
 
 }
 
