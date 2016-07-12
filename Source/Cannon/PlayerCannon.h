@@ -10,6 +10,12 @@ class CANNON_API APlayerCannon : public APawn
 {
 	GENERATED_BODY()
 
+private:
+	float Ang, NewRotation;
+	FVector CameraDirection;
+
+
+
 public:
 	// Sets default values for this pawn's properties
 	APlayerCannon();
@@ -24,8 +30,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 
-	FVector CamDir;
-	float Ang;
 
 	void MoveZ(float AxisValue);
 	void MoveY(float AxisValue);

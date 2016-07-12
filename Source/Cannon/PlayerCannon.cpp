@@ -10,7 +10,7 @@ APlayerCannon::APlayerCannon()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	CamDir = FVector(0.0f, 0.0f, 0.0f);
+	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -47,23 +47,18 @@ void APlayerCannon::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	if (!CamDir.IsZero())
+	if (!CameraDirection.IsZero())
 	{
-		FVector NewLocation = OurCamera->GetComponentLocation() + CamDir * DeltaTime;
+		FVector NewLocation = OurCamera->GetComponentLocation() + CameraDirection * DeltaTime;
 		OurCamera->SetWorldLocation(NewLocation);
 	}
 
 	{
-		CannonBarrel->SetRelativeRotation(CannonBarrel->GetComponentRotation() + FRotator(0.0f, 0.0f, Ang));
+		FRotator NewAngle = FRotator(CannonBarrel->GetComponentRotation() + FRotator(0.0f, 0.0f, Ang));
+		NewAngle.Roll = FMath::Clamp(NewAngle.Roll, 0.0f, 90.0f);
+		CannonBarrel->SetRelativeRotation(NewAngle);
 
 	}
-
-
-	/*{
-		FVector NewLocation = CannonBarrel->GetComponentLocation() + FVector(0,0,250) * DeltaTime;
-		CannonBarrel->SetWorldLocation(NewLocation);
-
-	}*/
 
 }
 
@@ -80,24 +75,23 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 
 void APlayerCannon::MoveZ(float AxisValue)
 {
-	CamDir.Z = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	CameraDirection.Z = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
 }
 
 void APlayerCannon::MoveY(float AxisValue)
 {
-	CamDir.Y = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	CameraDirection.Y = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+}
+
+void APlayerCannon::Zoom(float AxisValue)
+{
+	CameraDirection.X = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
 }
 
 void APlayerCannon::MoveTurret(float AxisValue)
 {
-	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 10.0f;
-	//CamDir.X = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
-
-
+	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
 
-void APlayerCannon::Zoom(float AxisValue)
-{
-	CamDir.X = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
-}
+
