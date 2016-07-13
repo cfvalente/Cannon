@@ -33,6 +33,8 @@ APlayerCannon::APlayerCannon()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
 	CannonBody->SetStaticMesh(CannonBodyObject.Object);
 
+	CountingTime = false;
+
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +62,12 @@ void APlayerCannon::Tick( float DeltaTime )
 
 	}
 
+	if (CountingTime)
+	{
+		ChargedTime = ChargedTime + 0.1f;
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(ChargedTime));
+	}
+
 }
 
 // Called to bind functionality to input
@@ -70,6 +78,9 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 	InputComponent->BindAxis("MoveY", this, &APlayerCannon::MoveY);
 	InputComponent->BindAxis("Zoom", this, &APlayerCannon::Zoom);
 	InputComponent->BindAxis("BarrelRotation", this, &APlayerCannon::MoveTurret);
+	InputComponent->BindAction("CannonFire", IE_Pressed, this, &APlayerCannon::BeginFire);
+	InputComponent->BindAction("CannonFire", IE_Released, this, &APlayerCannon::EndFire);
+	
 
 }
 
@@ -93,5 +104,17 @@ void APlayerCannon::MoveTurret(float AxisValue)
 	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
+void APlayerCannon::BeginFire()
+{
+	CountingTime = true;
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, TEXT("Chargin:"));
+}
 
+void APlayerCannon::EndFire()
+{
+	CountingTime = false;
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Firing!"));
+	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargedTime
+	ChargedTime = 0;
+}
 

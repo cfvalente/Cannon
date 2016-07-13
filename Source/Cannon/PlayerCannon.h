@@ -11,8 +11,9 @@ class CANNON_API APlayerCannon : public APawn
 	GENERATED_BODY()
 
 private:
-	float Ang, NewRotation;
+	float Ang, NewRotation, ChargedTime;
 	FVector CameraDirection;
+	bool CountingTime;
 
 
 
@@ -35,6 +36,8 @@ public:
 	void MoveY(float AxisValue);
 	void MoveTurret(float AxisValue);
 	void Zoom(float AxisValue);
+	void BeginFire();
+	void EndFire();
 
 	UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
