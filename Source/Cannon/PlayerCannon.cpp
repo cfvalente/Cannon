@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Cannon.h"
+#include "Shell.h"
 #include "PlayerCannon.h"
 
 
@@ -36,7 +37,6 @@ APlayerCannon::APlayerCannon()
 
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
-	TotalAng = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -58,10 +58,9 @@ void APlayerCannon::Tick( float DeltaTime )
 	}
 
 	{
-		FRotator NewAngle = FRotator(CannonBarrel->GetComponentRotation() + FRotator(0.0f, 0.0f, Ang));
+		NewAngle = FRotator(CannonBarrel->GetComponentRotation() + FRotator(0.0f, 0.0f, Ang));
 		NewAngle.Roll = FMath::Clamp(NewAngle.Roll, 0.0f, 90.0f);
 		CannonBarrel->SetRelativeRotation(NewAngle);
-
 	}
 
 	if (CountingTime)
@@ -102,30 +101,31 @@ void APlayerCannon::Zoom(float AxisValue)
 void APlayerCannon::MoveTurret(float AxisValue)
 {
 	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
-	if (TotalAng >= 0 && TotalAng <= 90)
-		TotalAng = TotalAng + Ang;
-	else
-	{
-		if (TotalAng < 0)
-			TotalAng = 0;
-		if (TotalAng > 90)
-			TotalAng = 90;
-	}
 }
 
 void APlayerCannon::BeginFire()
 {
 	CountingTime = true;
-	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, TEXT("Chargin:"));
 }
 
 void APlayerCannon::EndFire()
 {
+	float Speed;
+	FRotator ShellAngle;
 	CountingTime = false;
 	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargeTime
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Angule =") + FString::SanitizeFloat(TotalAng));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Angle =") + FString::SanitizeFloat(NewAngle.Roll));
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Power =") + FString::SanitizeFloat(ChargeTime));
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Fired As:"));
+
+	ChargeTime += 0.1f;
+	Speed = FMath::Clamp(ChargeTime, 0.1f, 2.5f) * 1200.0f;
+	ShellAngle.Roll = -NewAngle.Roll;
+	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());// , this->GetActorLocation(), NewAngle);
+	Shell->Init(this->GetActorLocation(), ShellAngle, Speed);
+
 	ChargeTime = 0;
+
+
 }
 
