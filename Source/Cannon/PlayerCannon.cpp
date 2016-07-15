@@ -64,8 +64,8 @@ void APlayerCannon::Tick( float DeltaTime )
 
 	if (CountingTime)
 	{
-		ChargedTime = ChargedTime + 0.1f;
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(ChargedTime));
+		ChargeTime = ChargeTime + DeltaTime;
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(ChargeTime));
 	}
 
 }
@@ -114,7 +114,7 @@ void APlayerCannon::EndFire()
 {
 	CountingTime = false;
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Firing!"));
-	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargedTime
-	ChargedTime = 0;
+	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargeTime
+	ChargeTime = 0;
 }
 
