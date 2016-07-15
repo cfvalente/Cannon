@@ -36,6 +36,7 @@ APlayerCannon::APlayerCannon()
 
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
+	TotalAng = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -64,10 +65,8 @@ void APlayerCannon::Tick( float DeltaTime )
 	}
 
 	if (CountingTime)
-	{
 		ChargeTime = ChargeTime + DeltaTime;
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(ChargeTime));
-	}
+
 
 }
 
@@ -103,19 +102,30 @@ void APlayerCannon::Zoom(float AxisValue)
 void APlayerCannon::MoveTurret(float AxisValue)
 {
 	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	if (TotalAng >= 0 && TotalAng <= 90)
+		TotalAng = TotalAng + Ang;
+	else
+	{
+		if (TotalAng < 0)
+			TotalAng = 0;
+		if (TotalAng > 90)
+			TotalAng = 90;
+	}
 }
 
 void APlayerCannon::BeginFire()
 {
 	CountingTime = true;
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, TEXT("Chargin:"));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, TEXT("Chargin:"));
 }
 
 void APlayerCannon::EndFire()
 {
 	CountingTime = false;
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Firing!"));
 	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargeTime
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Angule =") + FString::SanitizeFloat(TotalAng));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Power =") + FString::SanitizeFloat(ChargeTime));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Fired As:"));
 	ChargeTime = 0;
 }
 
