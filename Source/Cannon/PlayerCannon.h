@@ -11,7 +11,7 @@ class CANNON_API APlayerCannon : public APawn
 	GENERATED_BODY()
 
 private:
-	float Ang, NewRotation, ChargeTime;
+	float Ang,TotalAng, NewRotation, ChargeTime;
 	FVector CameraDirection;
 	bool CountingTime;
 
