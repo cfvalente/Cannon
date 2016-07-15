@@ -9,32 +9,33 @@ APlayerCannon::APlayerCannon()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
-	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
-
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	SetActorLocation(FVector::ZeroVector);
+
+	
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	RootComponent->SetRelativeLocation(FVector::ZeroVector);
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
-	OurVisibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OurVisibleComponent"));
 
-	//OurCamera->SetupAttachment(RootComponent);
-	OurCamera->SetWorldLocation(FVector(-450.0f, 0.0f, 450.0f));
-	OurCamera->SetWorldRotation(FRotator(-15.0f, 0.0f, 0.0f));
-	OurVisibleComponent->SetupAttachment(RootComponent);
+	OurCamera->SetupAttachment(RootComponent);
+	OurCamera->SetRelativeLocation(FVector(-500.0f, 0.0f, 200.0f));
+	OurCamera->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
 
-
+	
 	CannonBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBarrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/cano")); // wherein /Game/ is the Content folder.
+	CannonBarrel->SetupAttachment(RootComponent);
 	CannonBarrel->SetStaticMesh(CannonBarrelObject.Object);
 
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
+	CannonBody->SetupAttachment(RootComponent);
 	CannonBody->SetStaticMesh(CannonBodyObject.Object);
 
 	CountingTime = false;
-
+	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned

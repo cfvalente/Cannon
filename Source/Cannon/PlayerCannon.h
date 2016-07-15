@@ -39,8 +39,9 @@ public:
 	void BeginFire();
 	void EndFire();
 
-	UCameraComponent* OurCamera;
-	UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
+	//UCameraComponent* OurCamera;
+	UPROPERTY(EditAnywhere) UCameraComponent* OurCamera;
+	//UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
 
 
 
