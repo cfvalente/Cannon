@@ -14,6 +14,7 @@ private:
 	float Ang, ChargeTime;
 	FVector CameraDirection;
 	FRotator NewAngle;
+	FTransform NewTransform;
 	bool CountingTime;
 
 

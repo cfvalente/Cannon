@@ -11,15 +11,28 @@ AShell::AShell()
 	PrimaryActorTick.bCanEverTick = true;
 	//Colocar Valor certo
 	
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
+	RootComponent = CollisionComponent;
+	CollisionComponent->InitSphereRadius(40.0f);
+	CollisionComponent->SetCollisionProfileName(TEXT("Pawn"));
 
-	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	//RootComponent->SetRelativeLocation(FVector::ZeroVector);
 
 	Shell = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shell"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/bala")); // wherein /Game/ is the Content folder.
-	//Shell->SetupAttachment(RootComponent);
-	this->AttachRootComponentTo(Shell);
-	Shell->SetStaticMesh(CannonBarrelObject.Object);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShelllObject(TEXT("/Game/bala")); // wherein /Game/ is the Content folder.
+	Shell->SetupAttachment(RootComponent);
+	Shell->SetStaticMesh(ShelllObject.Object);
+
+	/*OurParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MovementParticles"));
+	OurParticleSystem->SetupAttachment(Shell);
+	OurParticleSystem->bAutoActivate = false;
+	OurParticleSystem->SetRelativeLocation(FVector(-20.0f, 0.0f, 20.0f));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
+	if (ParticleAsset.Succeeded())
+	{
+		OurParticleSystem->SetTemplate(ParticleAsset.Object);
+	}*/
+
+
 
 	
 }
@@ -36,28 +49,19 @@ void AShell::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	Location = Location + DeltaTime * Speed /*- 0.5 * Acceleration * DeltaTime * DeltaTime*/;
-	//SetActorLocation(Location);
-	Shell->SetWorldLocation(Location);
+	Location = Location + DeltaTime * Speed * 0.1;
+	SetActorLocation(Location);
 
 
 
 }
 
-void AShell::Init(FVector Location, FRotator Angle, float Speed)
+void AShell::Init(FVector Location, FVector Speed, FTransform Transform)
 {
-	Acceleration = Angle.RotateVector(FVector(0.0f, -0.0000010f, 0.0f));
-	//SetActorLocation(Location);
-	//SetActorRotation(Angle);
-	Shell->SetWorldLocation(Location);
-	Shell->SetWorldRotation(Angle);
-	this->Speed = Angle.RotateVector(FVector(0.0f, Speed, 0.0f));
-	this->Location = Location;
-	this->Angle = Angle;
-	//this->SetActorEnableCollision(true);
-	//this->SetLifeSpan(30);
-	Shell->SetSimulatePhysics(true);
-	Shell->WakeRigidBody();
-	//Shell->SetEnableGravity(true);
-	//Shell->SetMassOverrideInKg("XX", 30.0f, true);
+	SetActorTransform(Transform * FTransform(FRotator(0.0f, 0.0f, 180.0f)));
+	FTransform transf = FTransform(FRotator(0,0,Transform.Rotator().Euler().X)) * FTransform(FRotator(0.0f, 0.0f, 180.0f));
+
+	this->Speed = transf.TransformVector(Speed);
+	this->Location = Location + Transform.TransformVector(FVector(0.0f, -200.0f, 0.0f));
+
 }

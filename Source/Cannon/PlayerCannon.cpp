@@ -29,6 +29,7 @@ APlayerCannon::APlayerCannon()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/cano")); // wherein /Game/ is the Content folder.
 	CannonBarrel->SetupAttachment(RootComponent);
 	CannonBarrel->SetStaticMesh(CannonBarrelObject.Object);
+	CannonBarrel->SetRelativeRotation(FRotator(0.0f, 0.0f, 180.0f));
 
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
@@ -43,6 +44,10 @@ APlayerCannon::APlayerCannon()
 void APlayerCannon::BeginPlay()
 {
 	Super::BeginPlay();
+	Ang = -1.0f;
+	FRotator Rot = CannonBarrel->GetComponentRotation();
+	NewTransform = FTransform(FQuat(FRotator(0.0f, 0.0f, Ang + Rot.Roll))) * (FQuat(FRotator(Rot.Pitch, Rot.Yaw, 0.0f)));
+	CannonBarrel->SetWorldRotation(NewTransform.Rotator());
 	
 }
 
@@ -55,12 +60,16 @@ void APlayerCannon::Tick( float DeltaTime )
 	{
 		FVector NewLocation = OurCamera->GetComponentLocation() + CameraDirection * DeltaTime;
 		OurCamera->SetWorldLocation(NewLocation);
+		CameraDirection = FVector::ZeroVector;
 	}
 
+	if(!FMath::IsNearlyZero(Ang))
 	{
-		NewAngle = FRotator(CannonBarrel->GetComponentRotation() + FRotator(0.0f, 0.0f, Ang));
-		NewAngle.Roll = FMath::Clamp(NewAngle.Roll, 0.0f, 90.0f);
-		CannonBarrel->SetRelativeRotation(NewAngle);
+		float NewAng;
+		FRotator Rot = CannonBarrel->GetComponentRotation();
+		NewAng = FMath::ClampAngle(Ang + Rot.Roll, 90.0f, 180.0f);
+		NewTransform = FTransform(FQuat(FRotator(0.0f, 0.0f, NewAng))) * (FQuat(FRotator(Rot.Pitch, Rot.Yaw, 0.0f)));
+		CannonBarrel->SetWorldRotation(NewTransform.Rotator());
 	}
 
 	if (CountingTime)
@@ -85,22 +94,22 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 
 void APlayerCannon::MoveZ(float AxisValue)
 {
-	CameraDirection.Z = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	CameraDirection += GetActorUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
 }
 
 void APlayerCannon::MoveY(float AxisValue)
 {
-	CameraDirection.Y = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	CameraDirection += GetActorRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
 }
 
 void APlayerCannon::Zoom(float AxisValue)
 {
-	CameraDirection.X = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
+	CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
 }
 
 void APlayerCannon::MoveTurret(float AxisValue)
 {
-	Ang = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	Ang = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
 void APlayerCannon::BeginFire()
@@ -110,21 +119,14 @@ void APlayerCannon::BeginFire()
 
 void APlayerCannon::EndFire()
 {
-	float Speed;
-	FRotator ShellAngle;
+	FVector Speed;
 	CountingTime = false;
-	//Falta spawnar a bala na posicao relativa a Ang e com a forca relativa a ChargeTime
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Angle =") + FString::SanitizeFloat(NewAngle.Roll));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Power =") + FString::SanitizeFloat(ChargeTime));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Fired As:"));
 
-	ChargeTime += 0.1f;
-	Speed = FMath::Clamp(ChargeTime, 0.1f, 2.5f) * 1200.0f;
-	ShellAngle.Roll = -NewAngle.Roll;
-	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());// , this->GetActorLocation(), NewAngle);
-	Shell->Init(this->GetActorLocation(), ShellAngle, Speed);
 
-	ChargeTime = 0;
+	ChargeTime = 1.0f;
+	Speed = GetActorRightVector() * FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
+	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());
+	Shell->Init(this->GetActorLocation(), Speed, NewTransform);
 
 
 }

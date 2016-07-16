@@ -14,6 +14,7 @@ private:
 	FVector	Location;
 	FRotator Angle;
 	FVector Acceleration, Speed;
+	FTransform Transform;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -25,8 +26,9 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	void Init(FVector Location, FRotator Angle, float speed);
+	void Init(FVector Location, FVector speed, FTransform Transform);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;
 	
 };
