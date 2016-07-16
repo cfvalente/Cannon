@@ -29,7 +29,7 @@ APlayerCannon::APlayerCannon()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/cano")); // wherein /Game/ is the Content folder.
 	CannonBarrel->SetupAttachment(RootComponent);
 	CannonBarrel->SetStaticMesh(CannonBarrelObject.Object);
-	CannonBarrel->SetRelativeRotation(FRotator(0.0f, 0.0f, 180.0f));
+	CannonBarrel->SetWorldRotation(FRotator(0.0f, 0.0f, 180.0f));
 
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
@@ -70,6 +70,12 @@ void APlayerCannon::Tick( float DeltaTime )
 		NewAng = FMath::ClampAngle(Ang + Rot.Roll, 90.0f, 180.0f);
 		NewTransform = FTransform(FQuat(FRotator(0.0f, 0.0f, NewAng))) * (FQuat(FRotator(Rot.Pitch, Rot.Yaw, 0.0f)));
 		CannonBarrel->SetWorldRotation(NewTransform.Rotator());
+
+		/*
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang =") + FString::SanitizeFloat(Ang));
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewAng =") + FString::SanitizeFloat(NewAng));
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewTransf =") + FString::SanitizeFloat(NewTransform.Rotator().Euler().X));
+		*/
 	}
 
 	if (CountingTime)
@@ -123,7 +129,7 @@ void APlayerCannon::EndFire()
 	CountingTime = false;
 
 
-	ChargeTime = 1.0f;
+	ChargeTime += 1.0f;
 	Speed = GetActorRightVector() * FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
 	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());
 	Shell->Init(this->GetActorLocation(), Speed, NewTransform);

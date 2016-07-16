@@ -58,10 +58,26 @@ void AShell::Tick( float DeltaTime )
 
 void AShell::Init(FVector Location, FVector Speed, FTransform Transform)
 {
-	SetActorTransform(Transform * FTransform(FRotator(0.0f, 0.0f, 180.0f)));
-	FTransform transf = FTransform(FRotator(0,0,Transform.Rotator().Euler().X)) * FTransform(FRotator(0.0f, 0.0f, 180.0f));
+	Shell->SetWorldRotation((Transform * FTransform(FRotator(0.0f, 0.0f, 180.0f))).Rotator());
 
-	this->Speed = transf.TransformVector(Speed);
+	//FTransform transf = FTransform(FRotator(0, Transform.Rotator().Euler().Y, Transform.Rotator().Euler().X));
+	FVector ts = FVector(0.0f, -FMath::Cos(PI * Transform.Rotator().Euler().X / 180.0f) * Speed.Y, FMath::Abs(FMath::Sin(PI * Transform.Rotator().Euler().X / 180.0f) * Speed.Y));
+
+	/*
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Transform.X =") + FString::SanitizeFloat(Transform.Rotator().Euler().X));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Speed =") + FString::SanitizeFloat(Speed.Y));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("TransfSpeedY =") + FString::SanitizeFloat(transf.TransformVector(Speed).Y));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("TransfSpeedZ =") + FString::SanitizeFloat(transf.TransformVector(Speed).Z));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Sin X =") + FString::SanitizeFloat(FMath::Sin(PI * transf.Rotator().Euler().X / 180.0f)));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Cos X =") + FString::SanitizeFloat(FMath::Cos(PI *  transf.Rotator().Euler().X / 180.0f)));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Sin Y =") + FString::SanitizeFloat(FMath::Sin(PI * transf.Rotator().Euler().Y / 180.0f)));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Cos Y =") + FString::SanitizeFloat(FMath::Cos(PI * transf.Rotator().Euler().Y / 180.0f)));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Test SpeedY =") + FString::SanitizeFloat(ts.Y));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Test SpeedZ =") + FString::SanitizeFloat(ts.Z));
+	//this->Speed = transf.TransformVector(Speed);
+	*/
+	this->Speed = ts;
 	this->Location = Location + Transform.TransformVector(FVector(0.0f, -200.0f, 0.0f));
+	this->Transform = Transform;
 
 }
