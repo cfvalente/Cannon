@@ -56,28 +56,63 @@ void AShell::Tick( float DeltaTime )
 
 }
 
-void AShell::Init(FVector Location, FVector Speed, FTransform Transform)
+void AShell::Init(FVector Location, float speed, FTransform Transform)
 {
-	Shell->SetWorldRotation((Transform * FTransform(FRotator(0.0f, 0.0f, 180.0f))).Rotator());
+	FVector SpeedVec;
+	Shell->SetWorldRotation(FRotator(Transform.Rotator().Pitch, Transform.Rotator().Yaw, Transform.Rotator().Roll - 180.0f));
 
-	//FTransform transf = FTransform(FRotator(0, Transform.Rotator().Euler().Y, Transform.Rotator().Euler().X));
-	FVector ts = FVector(0.0f, -FMath::Cos(PI * Transform.Rotator().Euler().X / 180.0f) * Speed.Y, FMath::Abs(FMath::Sin(PI * Transform.Rotator().Euler().X / 180.0f) * Speed.Y));
+	float x, y, z;
+	x = FMath::Cos(PI - PI * Transform.Rotator().Euler().X / 180.0f) * FMath::Sin(-PI * Transform.Rotator().Euler().Z / 180.0f);
+	y = FMath::Cos(PI - PI * Transform.Rotator().Euler().X / 180.0f) * FMath::Cos(-PI * Transform.Rotator().Euler().Z / 180.0f);
+	z = FMath::Sin(PI - PI * Transform.Rotator().Euler().X / 180.0f);
 
-	/*
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Transform.X =") + FString::SanitizeFloat(Transform.Rotator().Euler().X));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Speed =") + FString::SanitizeFloat(Speed.Y));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("TransfSpeedY =") + FString::SanitizeFloat(transf.TransformVector(Speed).Y));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("TransfSpeedZ =") + FString::SanitizeFloat(transf.TransformVector(Speed).Z));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Sin X =") + FString::SanitizeFloat(FMath::Sin(PI * transf.Rotator().Euler().X / 180.0f)));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Cos X =") + FString::SanitizeFloat(FMath::Cos(PI *  transf.Rotator().Euler().X / 180.0f)));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Sin Y =") + FString::SanitizeFloat(FMath::Sin(PI * transf.Rotator().Euler().Y / 180.0f)));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Cos Y =") + FString::SanitizeFloat(FMath::Cos(PI * transf.Rotator().Euler().Y / 180.0f)));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Test SpeedY =") + FString::SanitizeFloat(ts.Y));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Test SpeedZ =") + FString::SanitizeFloat(ts.Z));
-	//this->Speed = transf.TransformVector(Speed);
-	*/
-	this->Speed = ts;
-	this->Location = Location + Transform.TransformVector(FVector(0.0f, -200.0f, 0.0f));
+	SpeedVec = FVector(x * speed, y * speed, z * speed);
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Roll =") + FString::SanitizeFloat(PI - PI * Transform.Rotator().Euler().X / 180.0f));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Yaw =") + FString::SanitizeFloat(PI * Transform.Rotator().Euler().Z / 180.0f));
+
+	this->Speed = SpeedVec;
+	this->Location = Location + FVector(x * 200.0f, y * 200.0f, z * 200.0f);
 	this->Transform = Transform;
 
+}
+
+
+FVector AShell::CustomAxisRotation(FVector vec, float degrees)
+{
+	float MCos = 1.0f - FMath::Cos(PI - PI * degrees / 180.0f);
+	float Cos = FMath::Cos(PI - PI * degrees / 180.0f);
+	float Sin = FMath::Sin(PI - PI * degrees / 180.0f);
+	float ux, uy, uz;
+
+	FVector NormVec = FVector(vec);
+	NormVec.Normalize();
+
+	ux = NormVec.Y;
+	uy = NormVec.Z;
+	uz = NormVec.X;
+
+	FMatrix CAxis = FMatrix();
+	CAxis.M[0][0] = Cos + ux*ux*MCos;
+	CAxis.M[0][1] = ux*uy*MCos - uz*Sin;
+	CAxis.M[0][2] = ux*uz*MCos + uy*Sin;
+	CAxis.M[0][3] = 0.0f;
+
+	CAxis.M[1][0] = uy*ux*MCos + uz*Sin;
+	CAxis.M[1][1] = Cos + uy*uy*MCos;
+	CAxis.M[1][2] = uy*uz*MCos - ux*Sin;
+	CAxis.M[1][3] = 0.0f;
+
+	CAxis.M[2][0] = uz*ux*MCos - uy*Sin;
+	CAxis.M[2][1] = uz*uy*MCos + ux*Sin;
+	CAxis.M[2][2] = Cos + uz*uz*MCos;
+	CAxis.M[2][3] = 0.0f;
+
+	CAxis.M[3][0] = 0.0f;
+	CAxis.M[3][1] = 0.0f;
+	CAxis.M[3][2] = 0.0f;
+	CAxis.M[3][3] = 1.0f;
+
+	return FTransform(CAxis).TransformVector(vec);
 }

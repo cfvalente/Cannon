@@ -15,6 +15,8 @@ private:
 	FRotator Angle;
 	FVector Acceleration, Speed;
 	FTransform Transform;
+
+	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
 	
 public:	
 	// Sets default values for this actor's properties
@@ -26,7 +28,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	void Init(FVector Location, FVector speed, FTransform Transform);
+	void Init(FVector Location, float speed, FTransform Transform);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;

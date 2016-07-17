@@ -125,12 +125,12 @@ void APlayerCannon::BeginFire()
 
 void APlayerCannon::EndFire()
 {
-	FVector Speed;
+	float Speed;
 	CountingTime = false;
 
 
 	ChargeTime += 1.0f;
-	Speed = GetActorRightVector() * FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
+	Speed = FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
 	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());
 	Shell->Init(this->GetActorLocation(), Speed, NewTransform);
 
