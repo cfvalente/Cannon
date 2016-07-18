@@ -76,6 +76,7 @@ void APlayerCannon::Tick( float DeltaTime )
 		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewAng =") + FString::SanitizeFloat(NewAng));
 		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewTransf =") + FString::SanitizeFloat(NewTransform.Rotator().Euler().X));
 		*/
+		
 	}
 
 	if (CountingTime)
@@ -129,11 +130,12 @@ void APlayerCannon::EndFire()
 	CountingTime = false;
 
 
-	ChargeTime += 1.0f;
-	Speed = FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
+	Speed = FMath::Clamp(ChargeTime, 0.1f, 2.5f) * 2500.0f;
 	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());
 	Shell->Init(this->GetActorLocation(), Speed, NewTransform);
 
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Speed =") + FString::SanitizeFloat(Speed));
+	ChargeTime = 0;
 
 }
 

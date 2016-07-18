@@ -69,8 +69,8 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 	SpeedVec = FVector(x * speed, y * speed, z * speed);
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Roll =") + FString::SanitizeFloat(PI - PI * Transform.Rotator().Euler().X / 180.0f));
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Yaw =") + FString::SanitizeFloat(PI * Transform.Rotator().Euler().Z / 180.0f));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Roll =") + FString::SanitizeFloat(PI - PI * Transform.Rotator().Euler().X / 180.0f));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang Yaw =") + FString::SanitizeFloat(PI * Transform.Rotator().Euler().Z / 180.0f));
 
 	this->Speed = SpeedVec;
 	this->Location = Location + FVector(x * 200.0f, y * 200.0f, z * 200.0f);
