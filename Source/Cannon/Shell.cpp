@@ -13,7 +13,7 @@ AShell::AShell()
 	
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	RootComponent = CollisionComponent;
-	CollisionComponent->InitSphereRadius(10.0f);
+	CollisionComponent->InitSphereRadius(20.0f);
 	CollisionComponent->BodyInstance.SetCollisionProfileName("Pawn");
 	CollisionComponent->OnComponentHit.AddDynamic(this, &AShell::OnHit);		// set up a notification for when this component hits something blocking
 
