@@ -31,5 +31,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;
-	
+
+	/** Projectile movement component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true")) class UProjectileMovementComponent* ProjectileMovement;
+
+
+	void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
