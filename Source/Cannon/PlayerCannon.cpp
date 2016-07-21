@@ -5,6 +5,9 @@
 #include "PlayerCannon.h"
 
 
+float InitialAngle = 0.0f;
+
+
 // Sets default values
 APlayerCannon::APlayerCannon()
 {
@@ -29,7 +32,7 @@ APlayerCannon::APlayerCannon()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/cano")); // wherein /Game/ is the Content folder.
 	CannonBarrel->SetupAttachment(RootComponent);
 	CannonBarrel->SetStaticMesh(CannonBarrelObject.Object);
-	CannonBarrel->SetWorldRotation(FRotator(0.0f, 0.0f, 180.0f));
+	CannonBarrel->SetRelativeRotation(FRotator(0.0f, 0.0f, 180.0f));
 
 	CannonBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBody"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBodyObject(TEXT("/Game/canhao")); // wherein /Game/ is the Content folder.
@@ -43,12 +46,9 @@ APlayerCannon::APlayerCannon()
 // Called when the game starts or when spawned
 void APlayerCannon::BeginPlay()
 {
-	Super::BeginPlay();
-	Ang = -1.0f;
-	FRotator Rot = CannonBarrel->GetComponentRotation();
-	NewTransform = FTransform(FQuat(FRotator(0.0f, 0.0f, Ang + Rot.Roll))) * (FQuat(FRotator(Rot.Pitch, Rot.Yaw, 0.0f)));
-	CannonBarrel->SetWorldRotation(NewTransform.Rotator());
-	
+	NewTransform = FTransform(CannonBarrel->GetComponentRotation());
+	InitialAngle = CannonBarrel->GetComponentRotation().Roll;
+	Super::BeginPlay();	
 }
 
 // Called every frame
@@ -66,16 +66,12 @@ void APlayerCannon::Tick( float DeltaTime )
 	if(!FMath::IsNearlyZero(Ang))
 	{
 		float NewAng;
-		FRotator Rot = CannonBarrel->GetComponentRotation();
-		NewAng = FMath::ClampAngle(Ang + Rot.Roll, 90.0f, 180.0f);
-		NewTransform = FTransform(FQuat(FRotator(0.0f, 0.0f, NewAng))) * (FQuat(FRotator(Rot.Pitch, Rot.Yaw, 0.0f)));
+		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator(); // Rotacao relativa ao objeto base
+		FRotator Rot = CannonBarrel->GetComponentRotation(); // Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
+		NewAng = FMath::ClampAngle(Ang + Rot.Roll, InitialAngle - 90.0f, InitialAngle);
+		NewTransform = FTransform(FRotator(Rot.Pitch, Rot.Yaw, NewAng));
 		CannonBarrel->SetWorldRotation(NewTransform.Rotator());
 
-		/*
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("Ang =") + FString::SanitizeFloat(Ang));
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewAng =") + FString::SanitizeFloat(NewAng));
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Red, TEXT("NewTransf =") + FString::SanitizeFloat(NewTransform.Rotator().Euler().X));
-		*/
 	}
 
 	if (CountingTime)
@@ -131,8 +127,16 @@ void APlayerCannon::EndFire()
 
 	ChargeTime += 1.0f;
 	Speed = FMath::Clamp(ChargeTime, 1.0f, 2.5f) * 25000.0f;
-	AShell* Shell = (AShell *)GetWorld()->SpawnActor<AShell>(AShell::StaticClass());
-	Shell->Init(this->GetActorLocation(), Speed, NewTransform);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		// spawn the projectile at the muzzle
+		AShell* Shell = World->SpawnActor<AShell>(AShell::StaticClass());
+		Shell->Init(this->GetActorLocation(), Speed, NewTransform);
+	}
+
+	ChargeTime = 0.0f;
 
 
 }

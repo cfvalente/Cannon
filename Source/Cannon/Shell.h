@@ -12,8 +12,7 @@ class CANNON_API AShell : public AActor
 
 private:
 	FVector	Location;
-	FRotator Angle;
-	FVector Acceleration, Speed;
+	FVector Speed;
 	FTransform Transform;
 
 	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
