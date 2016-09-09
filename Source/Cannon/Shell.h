@@ -35,6 +35,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;
 
+	UPROPERTY(EditAnywhere) 
+		float radius;
+	UPROPERTY(EditAnywhere) 
+		float strength;
+	UPROPERTY(EditAnywhere) 
+		TArray<AActor*> NearbyActors;
+
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true")) class UProjectileMovementComponent* ProjectileMovement;
 
