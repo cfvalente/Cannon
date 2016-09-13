@@ -52,5 +52,6 @@ public:
 	/** Static Mesh Comp, Set In BP Default Properties */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBarrel;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBody;
-	
+
+	UPROPERTY(EditAnywhere) USoundBase* FireSound;
 };
