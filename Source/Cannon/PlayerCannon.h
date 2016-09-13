@@ -11,10 +11,12 @@ class CANNON_API APlayerCannon : public APawn
 	GENERATED_BODY()
 
 private:
-	float Ang, ChargeTime;
+	float Ang,Ang2, ChargeTime;
 	FVector CameraDirection;
 	FRotator NewAngle;
+	FRotator NewAngle2;
 	FTransform NewTransform;
+	FTransform NewTransform2;
 	bool CountingTime;
 
 
@@ -37,6 +39,7 @@ public:
 	void MoveZ(float AxisValue);
 	void MoveY(float AxisValue);
 	void MoveTurret(float AxisValue);
+	void MoveTurret2(float AxisValue);
 	void Zoom(float AxisValue);
 	void BeginFire();
 	void EndFire();

@@ -6,6 +6,7 @@
 
 
 float InitialAngle = 0.0f;
+float InitialAngle2 = 0.0f;
 
 
 // Sets default values
@@ -22,6 +23,7 @@ APlayerCannon::APlayerCannon()
 	RootComponent->SetRelativeLocation(FVector::ZeroVector);
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	FireSound = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire"));
 	FireSound->SetActive(false);
@@ -55,6 +57,7 @@ void APlayerCannon::BeginPlay()
 {
 	NewTransform = FTransform(CannonBarrel->GetComponentRotation());
 	InitialAngle = CannonBarrel->GetComponentRotation().Roll;
+	InitialAngle2 = CannonBarrel->GetComponentRotation().Yaw;
 	Super::BeginPlay();	
 }
 
@@ -81,6 +84,18 @@ void APlayerCannon::Tick( float DeltaTime )
 
 	}
 
+	if (!FMath::IsNearlyZero(Ang2))
+	{
+		float NewAng2;
+		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator(); // Rotacao relativa ao objeto base
+		FRotator Rot = CannonBarrel->GetComponentRotation(); // Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
+		//NewAng2 = FMath::ClampAngle(Ang2 + Rot.Yaw, InitialAngle2 - 180.0f, InitialAngle2);
+		NewAng2 = Ang2 + Rot.Yaw;
+		NewTransform2 = FTransform(FRotator(Rot.Pitch, NewAng2, Rot.Roll));
+		CannonBarrel->SetWorldRotation(NewTransform2.Rotator());
+
+	}
+
 	if (CountingTime)
 		ChargeTime = ChargeTime + DeltaTime;
 
@@ -95,6 +110,7 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 	InputComponent->BindAxis("MoveY", this, &APlayerCannon::MoveY);
 	InputComponent->BindAxis("Zoom", this, &APlayerCannon::Zoom);
 	InputComponent->BindAxis("BarrelRotation", this, &APlayerCannon::MoveTurret);
+	InputComponent->BindAxis("BarrelRotation2", this, &APlayerCannon::MoveTurret2);
 	InputComponent->BindAction("CannonFire", IE_Pressed, this, &APlayerCannon::BeginFire);
 	InputComponent->BindAction("CannonFire", IE_Released, this, &APlayerCannon::EndFire);
 	
@@ -119,6 +135,11 @@ void APlayerCannon::Zoom(float AxisValue)
 void APlayerCannon::MoveTurret(float AxisValue)
 {
 	Ang = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+}
+
+void APlayerCannon::MoveTurret2(float AxisValue)
+{
+	Ang2 = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
 void APlayerCannon::BeginFire()
