@@ -23,7 +23,12 @@ APlayerCannon::APlayerCannon()
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	FireSound = CreateDefaultSubobject<USoundBase>(TEXT("/Game/Audio/FirstPersonTemplateWeaponFire02.uasset"));
+	FireSound = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire"));
+	FireSound->SetActive(false);
+	//static ConstructorHelpers::FObjectFinder<USoundBase> Sound(TEXT("/Game/fire")); // wherein /Game/ is the Content folder.
+	static ConstructorHelpers::FObjectFinder<USoundWave> loadedSoundWave(TEXT("/Game/fire"));
+	FireSound->SetSound(loadedSoundWave.Object);
+	FireSound->SetActive(true);
 
 	OurCamera->SetupAttachment(RootComponent);
 	OurCamera->SetRelativeLocation(FVector(-500.0f, 0.0f, 200.0f));
@@ -139,6 +144,7 @@ void APlayerCannon::EndFire()
 	}
 
 	ChargeTime = 0.0f;
-	UGameplayStatics::SpawnSoundAttached(FireSound, this->GetRootComponent());
+	FireSound->Play(0.0f);
+	//UGameplayStatics::SpawnSoundAttached(FireSound, this->GetRootComponent());
 }
 
