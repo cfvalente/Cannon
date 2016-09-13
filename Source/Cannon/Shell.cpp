@@ -100,62 +100,34 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	{
 		// Access the subclass instance with the * or -> operators.
 		UStaticMeshComponent *Component = *Itr;
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
 
 		if (Component)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), radius, strength, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->AddRadialImpulse(GetActorLocation(), 1000, 500, ERadialImpulseFalloff::RIF_Linear, true);
 		}
 	}
 
-	/*for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
 	{
-		// Same as with the Object Iterator, access the subclass instance with the * or -> operators.
-		AActor *Mesh = *ActorItr;
-		TArray<USceneComponent> t;
-		//ClientMessage(ActorItr->GetName());
-		//ClientMessage(ActorItr->GetActorLocation().ToString());
-		UStaticMeshComponent* SM = Cast<UStaticMeshComponent>((*ActorItr)->GetRootComponent());
-		t = SM->GetAttachChildren();
-		if ()
+		// Access the subclass instance with the * or -> operators.
+		UDestructibleComponent *Component = *Itr;
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+
+		if (Component)
 		{
-			SM->AddRadialImpulse(GetActorLocation(), radius, strength, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->AddRadialImpulse(GetActorLocation(), 1000, 500, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->ApplyRadiusDamage(35000, GetActorLocation(), 1000, 2, 1);
 		}
-	}*/
+	}
+	Destroy();
+
 
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
+	/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-		//OtherComp->AddRadialImpulse(GetActorLocation(), radius, strength, RIF_Constant, false);
-
 
 		Destroy();
-	}
-
-	/*if (OtherActor->IsA(ACastle::StaticClass()))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString("LALALALLAAL"));
-		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-		for (auto It = NearbyActors.CreateIterator(); It; It++)
-		{
-			//Get the static mesh component for each actor
-			UStaticMeshComponent* SM = Cast<UStaticMeshComponent>((*It)->GetRootComponent());
-
-			/*If the component is valid, apply a radial impulse from the location of the "Bomb" Actor
-			having as Radius and Strength the values from the Editor.
-			The RIF_Linear impulse fall off parameter means that we want the impulse to fall off to zero when
-			the max distance is reached.
-			The last parameter means that we want to ignore the mass of each Static Mesh*/
-			/*GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString("LALALALLAAL2"));
-			if (SM)
-			{
-				SM->AddRadialImpulse(GetActorLocation(), radius, strength, ERadialImpulseFalloff::RIF_Linear, true);
-			}
-		}
-
-		//OtherComp->AddRadialImpulse(GetActorLocation(), radius, strength, RIF_Constant, false);
-		//Trace
-		//Destroy();
 	}*/
 }
