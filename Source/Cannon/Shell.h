@@ -39,8 +39,6 @@ public:
 		float radius;
 	UPROPERTY(EditAnywhere) 
 		float strength;
-	UPROPERTY(EditAnywhere) 
-		TArray<AActor*> NearbyActors;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true")) class UProjectileMovementComponent* ProjectileMovement;

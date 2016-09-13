@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "Engine/DestructibleMesh.h"
 #include "GameFramework/Actor.h"
 #include "Castle.generated.h"
 
 UCLASS()
-class CANNON_API ACastle : public AActor
+class CANNON_API ACastle : public ADestructibleActor
 {
 	GENERATED_BODY()
 
@@ -19,10 +20,10 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Castle;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Castle2;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Castle3;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Castle4;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Castle;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Castle2;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Castle3;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Castle4;
 
 
 
