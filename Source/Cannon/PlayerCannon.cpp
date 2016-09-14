@@ -129,7 +129,7 @@ void APlayerCannon::MoveY(float AxisValue)
 
 void APlayerCannon::Zoom(float AxisValue)
 {
-	CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2500.0f;
+	CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 6000.0f;
 }
 
 void APlayerCannon::MoveTurret(float AxisValue)
