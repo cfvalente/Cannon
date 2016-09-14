@@ -5,8 +5,8 @@
 #include "PlayerCannon.h"
 
 
-float InitialAngle = 0.0f;
-float InitialAngle2 = 0.0f;
+float InitialAngleRoll;
+float InitialAngleYaw;
 
 
 // Sets default values
@@ -56,8 +56,8 @@ APlayerCannon::APlayerCannon()
 void APlayerCannon::BeginPlay()
 {
 	NewTransform = FTransform(CannonBarrel->GetComponentRotation());
-	InitialAngle = CannonBarrel->GetComponentRotation().Roll;
-	InitialAngle2 = CannonBarrel->GetComponentRotation().Yaw;
+	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
+	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
 	Super::BeginPlay();	
 }
 
@@ -73,26 +73,15 @@ void APlayerCannon::Tick( float DeltaTime )
 		CameraDirection = FVector::ZeroVector;
 	}
 
-	if(!FMath::IsNearlyZero(Ang))
+	if(!FMath::IsNearlyZero(AngRoll) || !FMath::IsNearlyZero(AngYaw))
 	{
-		float NewAng;
-		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator(); // Rotacao relativa ao objeto base
-		FRotator Rot = CannonBarrel->GetComponentRotation(); // Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
-		NewAng = FMath::ClampAngle(Ang + Rot.Roll, InitialAngle - 90.0f, InitialAngle);
-		NewTransform = FTransform(FRotator(Rot.Pitch, Rot.Yaw, NewAng));
+		float NewRoll, NewYaw;
+		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator();								// Rotacao relativa ao objeto base
+		FRotator Rot = CannonBarrel->GetComponentRotation();											// Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
+		NewRoll = FMath::ClampAngle(AngRoll + Rot.Roll, InitialAngleRoll - 90.0f, InitialAngleRoll);
+		NewYaw = Rot.Yaw - AngYaw;
+		NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
 		CannonBarrel->SetWorldRotation(NewTransform.Rotator());
-
-	}
-
-	if (!FMath::IsNearlyZero(Ang2))
-	{
-		float NewAng2;
-		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator(); // Rotacao relativa ao objeto base
-		FRotator Rot = CannonBarrel->GetComponentRotation(); // Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
-		//NewAng2 = FMath::ClampAngle(Ang2 + Rot.Yaw, InitialAngle2 - 180.0f, InitialAngle2);
-		NewAng2 = Ang2 + Rot.Yaw;
-		NewTransform2 = FTransform(FRotator(Rot.Pitch, NewAng2, Rot.Roll));
-		CannonBarrel->SetWorldRotation(NewTransform2.Rotator());
 
 	}
 
@@ -109,8 +98,8 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 	InputComponent->BindAxis("MoveZ", this, &APlayerCannon::MoveZ);
 	InputComponent->BindAxis("MoveY", this, &APlayerCannon::MoveY);
 	InputComponent->BindAxis("Zoom", this, &APlayerCannon::Zoom);
-	InputComponent->BindAxis("BarrelRotation", this, &APlayerCannon::MoveTurret);
-	InputComponent->BindAxis("BarrelRotation2", this, &APlayerCannon::MoveTurret2);
+	InputComponent->BindAxis("BarrelRotationRoll", this, &APlayerCannon::MoveTurretRoll);
+	InputComponent->BindAxis("BarrelRotationYaw", this, &APlayerCannon::MoveTurretYaw);
 	InputComponent->BindAction("CannonFire", IE_Pressed, this, &APlayerCannon::BeginFire);
 	InputComponent->BindAction("CannonFire", IE_Released, this, &APlayerCannon::EndFire);
 	
@@ -132,14 +121,14 @@ void APlayerCannon::Zoom(float AxisValue)
 	CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 6000.0f;
 }
 
-void APlayerCannon::MoveTurret(float AxisValue)
+void APlayerCannon::MoveTurretRoll(float AxisValue)
 {
-	Ang = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	AngRoll = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
-void APlayerCannon::MoveTurret2(float AxisValue)
+void APlayerCannon::MoveTurretYaw(float AxisValue)
 {
-	Ang2 = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	AngYaw = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
 }
 
 void APlayerCannon::BeginFire()
@@ -162,10 +151,9 @@ void APlayerCannon::EndFire()
 		// spawn the projectile at the muzzle
 		AShell* Shell = World->SpawnActor<AShell>(AShell::StaticClass());
 		Shell->Init(this->GetActorLocation(), Speed, NewTransform);
+		FireSound->Play(0.0f);
 	}
 
 	ChargeTime = 0.0f;
-	FireSound->Play(0.0f);
-	//UGameplayStatics::SpawnSoundAttached(FireSound, this->GetRootComponent());
 }
 
