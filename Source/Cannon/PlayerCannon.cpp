@@ -128,7 +128,7 @@ void APlayerCannon::MoveTurretRoll(float AxisValue)
 
 void APlayerCannon::MoveTurretYaw(float AxisValue)
 {
-	AngYaw = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	AngYaw = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2.0f;
 }
 
 void APlayerCannon::BeginFire()
