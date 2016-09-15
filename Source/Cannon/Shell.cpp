@@ -112,7 +112,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 		if (Component)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), 800, 1500, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
 		}
 	}
 
@@ -124,8 +124,8 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 		if (Component)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), 800, 1500, ERadialImpulseFalloff::RIF_Linear, true);
-			Component->ApplyRadiusDamage(33000, GetActorLocation(), 1300, 2, 1);
+			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
 		}
 	}
 	Destroy();
