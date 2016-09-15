@@ -23,15 +23,6 @@ APlayerCannon::APlayerCannon()
 	RootComponent->SetRelativeLocation(FVector::ZeroVector);
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	FireSound = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire"));
-	FireSound->SetActive(false);
-	//static ConstructorHelpers::FObjectFinder<USoundBase> Sound(TEXT("/Game/fire")); // wherein /Game/ is the Content folder.
-	static ConstructorHelpers::FObjectFinder<USoundWave> loadedSoundWave(TEXT("/Game/fire"));
-	FireSound->SetSound(loadedSoundWave.Object);
-	FireSound->SetActive(true);
-
 	OurCamera->SetupAttachment(RootComponent);
 	OurCamera->SetRelativeLocation(FVector(-500.0f, 0.0f, 200.0f));
 	OurCamera->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
@@ -151,7 +142,6 @@ void APlayerCannon::EndFire()
 		// spawn the projectile at the muzzle
 		AShell* Shell = World->SpawnActor<AShell>(AShell::StaticClass());
 		Shell->Init(this->GetActorLocation(), Speed, NewTransform);
-		FireSound->Play(0.0f);
 	}
 
 	ChargeTime = 0.0f;

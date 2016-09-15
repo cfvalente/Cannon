@@ -43,5 +43,7 @@ public:
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true")) class UProjectileMovementComponent* ProjectileMovement;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* FireSound;
+
 
 };

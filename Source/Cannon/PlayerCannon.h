@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Engine.h"
 #include "GameFramework/Pawn.h"
 #include "PlayerCannon.generated.h"
 
@@ -53,5 +54,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBarrel;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBody;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* FireSound;
+
 };

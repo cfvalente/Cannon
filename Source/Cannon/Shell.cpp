@@ -24,6 +24,14 @@ AShell::AShell()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShelllObject(TEXT("/Game/bala")); // wherein /Game/ is the Content folder.
 	Shell->SetupAttachment(RootComponent);
 	Shell->SetStaticMesh(ShelllObject.Object);
+
+	USoundWave *loadedSoundWave;
+	FireSound = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> Sound(TEXT("/Game/fire"));
+	loadedSoundWave = Sound.Object;
+	FireSound->SetSound(loadedSoundWave);
+	FireSound->bStopWhenOwnerDestroyed = false;
+	FireSound->Play(0.0f);
 	
 
 	/*OurParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MovementParticles"));
