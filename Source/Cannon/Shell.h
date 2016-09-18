@@ -35,15 +35,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;
 
-	UPROPERTY(EditAnywhere) 
-		float radius;
-	UPROPERTY(EditAnywhere) 
-		float strength;
+	
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true")) class UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* FireSound;
 
+
+	static float DamageZone;
+	static float DamageStrength;
+	static float PushZone;
+	static float PushStrength;
 
 };
