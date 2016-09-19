@@ -5,6 +5,11 @@
 #include "Castle.h"
 #include "EngineUtils.h" 
 
+float AShell::DamageZone;
+float AShell::DamageStrength;
+float AShell::PushZone;
+float AShell::PushStrength;
+
 
 // Sets default values
 AShell::AShell()
@@ -55,14 +60,6 @@ AShell::AShell()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 6.0f;
-	DamageZone = 10.0f;
-	DamageStrength = 100.0f;
-	PushZone = 10.0f;
-	PushStrength = 10.0f;
-	/*AShell::DamageZone = 10.0f;
-	AShell::DamageStrength = 100.0f;
-	AShell::PushZone = 10.0f;
-	AShell::PushStrength = 10.0f;*/
 }
 
 // Called when the game starts or when spawned
@@ -130,12 +127,15 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 		{
 			Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
 			Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
+			//Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
+			//Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
 		}
 	}
-	DamageZone = DamageZone + 10.0f;
-	DamageStrength = DamageStrength + 100.0f;
-	PushZone = PushZone + 10.0f;
-	PushStrength = PushStrength + 10.0f;
+	DamageZone = DamageZone + 100.0f;
+	DamageStrength = DamageStrength + 10000.0f;
+	PushZone = PushZone + 100.0f;
+	PushStrength = PushStrength + 100.0f;
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone));
 	Destroy();
 
 	// Only add impulse and destroy projectile if we hit a physics

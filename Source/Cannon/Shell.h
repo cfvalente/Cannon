@@ -42,10 +42,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* FireSound;
 
-
 	static float DamageZone;
 	static float DamageStrength;
 	static float PushZone;
 	static float PushStrength;
-
 };

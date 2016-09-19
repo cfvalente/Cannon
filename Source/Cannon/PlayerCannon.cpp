@@ -50,6 +50,11 @@ void APlayerCannon::BeginPlay()
 	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
 	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
 	Super::BeginPlay();	
+
+	AShell::DamageZone = 10.0f;
+	AShell::DamageStrength = 100.0f;
+	AShell::PushZone = 10.0f;
+	AShell::PushStrength = 10.0f;
 }
 
 // Called every frame
