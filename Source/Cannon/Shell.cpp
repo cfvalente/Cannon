@@ -38,17 +38,13 @@ AShell::AShell()
 	FireSound->bStopWhenOwnerDestroyed = false;
 	FireSound->Play(0.0f);
 	
-
-	/*OurParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MovementParticles"));
-	OurParticleSystem->SetupAttachment(Shell);
-	OurParticleSystem->bAutoActivate = false;
-	OurParticleSystem->SetRelativeLocation(FVector(-20.0f, 0.0f, 20.0f));
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
-	if (ParticleAsset.Succeeded())
-	{
-		OurParticleSystem->SetTemplate(ParticleAsset.Object);
-	}*/
-
+	ExplosionEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("P_Explosion"));
+	ExplosionEffect->SetupAttachment(Shell);
+	ExplosionEffect->bAutoActivate = false;
+	ExplosionEffect->SetRelativeLocation(this->Location);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_Explosion(TEXT("/Game/StarterContent/Particles/P_Explosion.P_Explosion"));
+	if (P_Explosion.Succeeded())
+		ExplosionEffect->SetTemplate(P_Explosion.Object);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -58,8 +54,9 @@ AShell::AShell()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
-	// Die after 3 seconds by default
-	InitialLifeSpan = 6.0f;
+	// Die after x seconds by default
+	InitialLifeSpan = 60.0f;
+	
 }
 
 // Called when the game starts or when spawned
@@ -98,6 +95,7 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 	this->Location = Location + this->Transform.TransformVector(FVector(0.0f, 250.0f, 0.0f));
 	SetActorLocation(this->Location);
 
+	ExplosionEffect->SetRelativeScale3D(FVector(DamageZone / 80, DamageZone / 80, DamageZone / 80));
 }
 
 
@@ -136,7 +134,12 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	PushZone = PushZone + 100.0f;
 	PushStrength = PushStrength + 100.0f;
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone));
-	Destroy();
+	ExplosionEffect->Activate(true);
+	//Destroy();
+	Shell->SetVisibility(false);
+	SetActorEnableCollision(false);
+	ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
+
 
 	// Only add impulse and destroy projectile if we hit a physics
 	/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))

@@ -46,4 +46,8 @@ public:
 	static float DamageStrength;
 	static float PushZone;
 	static float PushStrength;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* ExplosionEffect;
+	
+	
 };
