@@ -46,6 +46,14 @@ AShell::AShell()
 	if (P_Explosion.Succeeded())
 		ExplosionEffect->SetTemplate(P_Explosion.Object);
 
+	SmokeEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Smoke"));
+	SmokeEffect->SetupAttachment(Shell);
+	SmokeEffect->SetRelativeLocation(this->Location);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_Smoke(TEXT("/Game/StarterContent/Particles/P_Steam.P_Steam"));
+	if (P_Smoke.Succeeded())
+		SmokeEffect->SetTemplate(P_Smoke.Object);
+
+
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComponent;
@@ -70,6 +78,7 @@ void AShell::BeginPlay()
 void AShell::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+	//SmokeEffect->->SetWorldTransform(this->GetTransform());
 	//Location = Location + DeltaTime * Speed * 0.1;
 	//SetActorLocation(Location);
 
@@ -135,6 +144,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone));
 	ExplosionEffect->Activate(true);
 	//Destroy();
+	SmokeEffect->Deactivate();
 	Shell->SetVisibility(false);
 	SetActorEnableCollision(false);
 	ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
