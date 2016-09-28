@@ -70,7 +70,6 @@ void AShell::BeginPlay()
 void AShell::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
 	//Location = Location + DeltaTime * Speed * 0.1;
 	//SetActorLocation(Location);
 
