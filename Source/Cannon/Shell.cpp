@@ -14,10 +14,10 @@ float AShell::PushStrength;
 // Sets default values
 AShell::AShell()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	//Colocar Valor certo
-	
+
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	RootComponent = CollisionComponent;
 	CollisionComponent->InitSphereRadius(20.0f);
@@ -37,7 +37,8 @@ AShell::AShell()
 	FireSound->SetSound(loadedSoundWave);
 	FireSound->bStopWhenOwnerDestroyed = false;
 	FireSound->Play(0.0f);
-	
+
+
 	ExplosionEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("P_Explosion"));
 	ExplosionEffect->SetupAttachment(Shell);
 	ExplosionEffect->bAutoActivate = false;
@@ -64,26 +65,35 @@ AShell::AShell()
 
 	// Die after x seconds by default
 	InitialLifeSpan = 60.0f;
-	
+
 }
 
 // Called when the game starts or when spawned
 void AShell::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
-void AShell::Tick( float DeltaTime )
+void AShell::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 	//SmokeEffect->->SetWorldTransform(this->GetTransform());
 	//Location = Location + DeltaTime * Speed * 0.1;
 	//SetActorLocation(Location);
 
+	if (this->timetodie)
+		this->lifetime += DeltaTime;
 
+	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(lifetime));
 
+	if (this->lifetime >= 8.0f)
+	{
+		Destroy();
+		this->timetodie = false;
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone - DamageZone));
+	}
 }
 
 void AShell::Init(FVector Location, float speed, FTransform Transform)
@@ -137,12 +147,16 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 			//Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
 		}
 	}
+
 	DamageZone = DamageZone + 100.0f;
 	DamageStrength = DamageStrength + 10000.0f;
 	PushZone = PushZone + 100.0f;
 	PushStrength = PushStrength + 100.0f;
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone));
 	ExplosionEffect->Activate(true);
+
+
+	this->timetodie = true;
 	//Destroy();
 	SmokeEffect->Deactivate();
 	Shell->SetVisibility(false);
@@ -153,8 +167,8 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	// Only add impulse and destroy projectile if we hit a physics
 	/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+	OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
-		Destroy();
+	Destroy();
 	}*/
 }

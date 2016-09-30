@@ -14,6 +14,8 @@ private:
 	FVector	Location;
 	FVector Speed;
 	FTransform Transform;
+	bool timetodie;
+	float lifetime;
 
 	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
 	
