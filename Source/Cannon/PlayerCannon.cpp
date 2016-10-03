@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Cannon.h"
@@ -12,8 +5,7 @@
 #include "PlayerCannon.h"
 
 
-float InitialAngleRoll;
-float InitialAngleYaw;
+
 
 
 // Sets default values
@@ -29,12 +21,6 @@ APlayerCannon::APlayerCannon()
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent->SetRelativeLocation(FVector::ZeroVector);
 
-	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
-	OurCamera->SetupAttachment(RootComponent);
-	OurCamera->SetRelativeLocation(FVector(-500.0f, 0.0f, 200.0f));
-	OurCamera->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
-
-
 	CannonBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBarrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CannonBarrelObject(TEXT("/Game/cano")); // wherein /Game/ is the Content folder.
 	CannonBarrel->SetupAttachment(RootComponent);
@@ -46,6 +32,17 @@ APlayerCannon::APlayerCannon()
 	CannonBody->SetupAttachment(RootComponent);
 	CannonBody->SetStaticMesh(CannonBodyObject.Object);
 
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(CannonBarrel);
+	SpringArm->SetRelativeLocation(FVector(0.0f, -250.0f, -70.0f));
+	SpringArm->SetRelativeRotation(FRotator(0.0f, 165.0f, 90.0f));
+
+	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
+	OurCamera->SetupAttachment(SpringArm);
+	OurCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	OurCamera->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+
+	Mode = CameraMode::muzzle;
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
 }
@@ -111,17 +108,50 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 
 void APlayerCannon::MoveZ(float AxisValue)
 {
-	CameraDirection += GetActorUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	if (Mode == CameraMode::muzzle)
+	{
+		CameraDirection += CannonBarrel->GetUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
+	}
+	else if (Mode == CameraMode::free)
+	{
+		CameraDirection += GetActorUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
+	}
+	else
+	{
+
+	}
 }
 
 void APlayerCannon::MoveY(float AxisValue)
 {
-	CameraDirection += GetActorRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	if (Mode == CameraMode::muzzle)
+	{
+		CameraDirection += CannonBarrel->GetForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
+	}
+	else if (Mode == CameraMode::free)
+	{
+		CameraDirection += GetActorRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
+	}
+	else
+	{
+
+	}
 }
 
 void APlayerCannon::Zoom(float AxisValue)
 {
-	CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 6000.0f;
+	if (Mode == CameraMode::muzzle)
+	{
+		CameraDirection += CannonBarrel->GetRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -6000.0f;
+	}
+	else if (Mode == CameraMode::free)
+	{
+		CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 6000.0f;
+	}
+	else
+	{
+
+	}
 }
 
 void APlayerCannon::MoveTurretRoll(float AxisValue)

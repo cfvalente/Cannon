@@ -110,7 +110,7 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 
 	ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, speed * 0.05f, 0.0f));
 
-	this->Location = Location + this->Transform.TransformVector(FVector(0.0f, 250.0f, 0.0f));
+	this->Location = Location + this->Transform.TransformVector(FVector(0.0f, 333.0f, 0.0f));
 	SetActorLocation(this->Location);
 
 	ExplosionEffect->SetRelativeScale3D(FVector(DamageZone / 80, DamageZone / 80, DamageZone / 80));

@@ -6,6 +6,9 @@
 #include "GameFramework/Pawn.h"
 #include "PlayerCannon.generated.h"
 
+
+
+
 UCLASS()
 class CANNON_API APlayerCannon : public APawn
 {
@@ -16,6 +19,12 @@ private:
 	FVector CameraDirection;
 	FTransform NewTransform;
 	bool CountingTime;
+	float InitialAngleRoll;
+	float InitialAngleYaw;
+
+	enum class CameraMode { muzzle, free };
+	CameraMode Mode;
+//	int CameraMode;
 
 
 
@@ -44,6 +53,7 @@ public:
 
 	//UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) UCameraComponent* OurCamera;
+	UPROPERTY(EditAnywhere) USpringArmComponent* SpringArm;
 	//UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
 
 
@@ -53,6 +63,7 @@ public:
 	/** Static Mesh Comp, Set In BP Default Properties */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBarrel;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBody;
+
 
 
 };
