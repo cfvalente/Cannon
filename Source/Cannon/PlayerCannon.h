@@ -21,6 +21,7 @@ private:
 	bool CountingTime;
 	float InitialAngleRoll;
 	float InitialAngleYaw;
+	float DisplayedAng;
 
 	enum class CameraMode { muzzle, free };
 	CameraMode Mode;

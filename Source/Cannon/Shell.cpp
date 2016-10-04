@@ -152,7 +152,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	DamageStrength = DamageStrength + 10000.0f;
 	PushZone = PushZone + 100.0f;
 	PushStrength = PushStrength + 100.0f;
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone));
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "DamageZone=" + FString::SanitizeFloat(DamageZone));
 	ExplosionEffect->Activate(true);
 
 

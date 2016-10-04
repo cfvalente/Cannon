@@ -36,7 +36,7 @@ APlayerCannon::APlayerCannon()
 	SpringArm->SetupAttachment(CannonBarrel);
 	SpringArm->SetRelativeLocation(FVector(0.0f, -250.0f, -70.0f));
 	SpringArm->SetRelativeRotation(FRotator(0.0f, 165.0f, 90.0f));
-
+	
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
 	OurCamera->SetupAttachment(SpringArm);
 	OurCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
@@ -51,8 +51,10 @@ APlayerCannon::APlayerCannon()
 void APlayerCannon::BeginPlay()
 {
 	NewTransform = FTransform(CannonBarrel->GetComponentRotation());
+
 	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
 	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
+	DisplayedAng = InitialAngleRoll;
 	Super::BeginPlay();
 
 	AShell::DamageZone = 10.0f;
@@ -157,6 +159,9 @@ void APlayerCannon::Zoom(float AxisValue)
 void APlayerCannon::MoveTurretRoll(float AxisValue)
 {
 	AngRoll = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+	DisplayedAng = FMath::Clamp(DisplayedAng - AngRoll, 0.0f, 90.0f);
+	//GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(CannonBarrel->GetComponentRotation().Roll)));
+	GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(DisplayedAng)));
 }
 
 void APlayerCannon::MoveTurretYaw(float AxisValue)
