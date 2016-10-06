@@ -129,7 +129,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 		if (Component)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
 		}
 	}
 
@@ -141,18 +141,20 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 		if (Component)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
-			Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
-			//Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
-			//Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
+			//Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+			//Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
+			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
 		}
 	}
 
+	/*
 	DamageZone = DamageZone + 100.0f;
 	DamageStrength = DamageStrength + 10000.0f;
 	PushZone = PushZone + 100.0f;
 	PushStrength = PushStrength + 100.0f;
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "DamageZone=" + FString::SanitizeFloat(DamageZone));
+	*/
 	ExplosionEffect->Activate(true);
 
 

@@ -58,7 +58,6 @@ void APlayerCannon::BeginPlay()
 
 	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
 	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
-	DisplayedAng = InitialAngleRoll;
 	Super::BeginPlay();
 
 	AShell::DamageZone = 10.0f;
@@ -97,10 +96,12 @@ void APlayerCannon::Tick(float DeltaTime)
 			float NewRoll, NewYaw;
 			//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator();								// Rotacao relativa ao objeto base
 			FRotator Rot = CannonBarrel->GetComponentRotation();											// Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
-			NewRoll = FMath::ClampAngle(AngRoll + Rot.Roll, InitialAngleRoll - 90.0f, InitialAngleRoll);
+			NewRoll = FMath::ClampAngle(AngRoll + Rot.Roll, InitialAngleRoll - 90.0f, InitialAngleRoll + 10.0f);
 			NewYaw = Rot.Yaw - AngYaw;
 			NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
 			CannonBarrel->SetWorldRotation(NewTransform.Rotator());
+
+			GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(180.0f - NewRoll)));
 		}
 		else if (Mode == CameraMode::free)
 		{
@@ -199,9 +200,6 @@ void APlayerCannon::Zoom(float AxisValue)
 void APlayerCannon::MoveTurretRoll(float AxisValue)
 {
 		AngRoll = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
-		DisplayedAng = FMath::Clamp(DisplayedAng - AngRoll, 0.0f, 90.0f);
-		GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(DisplayedAng)));
-
 }
 
 void APlayerCannon::MoveTurretYaw(float AxisValue)
