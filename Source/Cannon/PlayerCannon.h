@@ -51,9 +51,11 @@ public:
 	void Zoom(float AxisValue);
 	void BeginFire();
 	void EndFire();
+	void ToggleCamera();
 
 	//UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) UCameraComponent* OurCamera;
+	UPROPERTY(EditAnywhere) UCameraComponent* FreeCamera;
 	UPROPERTY(EditAnywhere) USpringArmComponent* SpringArm;
 	//UPROPERTY(EditAnywhere) USceneComponent* OurVisibleComponent;
 

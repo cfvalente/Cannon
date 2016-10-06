@@ -35,12 +35,16 @@ APlayerCannon::APlayerCannon()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(CannonBarrel);
 	SpringArm->SetRelativeLocation(FVector(0.0f, -250.0f, -70.0f));
-	SpringArm->SetRelativeRotation(FRotator(0.0f, 165.0f, 90.0f));
+	SpringArm->SetRelativeRotation(FRotator(165.0f, 90.0f, 0.0f));
 	
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OurCamera"));
 	OurCamera->SetupAttachment(SpringArm);
 	OurCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	OurCamera->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	OurCamera->Activate();
+
+	FreeCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FreeCamera"));
+	FreeCamera->Deactivate();
 
 	Mode = CameraMode::muzzle;
 	CountingTime = false;
@@ -68,22 +72,46 @@ void APlayerCannon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!CameraDirection.IsZero())
-	{
-		FVector NewLocation = OurCamera->GetComponentLocation() + CameraDirection * DeltaTime;
-		OurCamera->SetWorldLocation(NewLocation);
-		CameraDirection = FVector::ZeroVector;
-	}
+
+		if (!CameraDirection.IsZero())
+		{
+			if (Mode == CameraMode::muzzle)
+			{
+				FVector NewLocation = SpringArm->GetComponentLocation() + CameraDirection * DeltaTime;
+				SpringArm->SetWorldLocation(NewLocation);
+				CameraDirection = FVector::ZeroVector;
+			}
+			else if (Mode == CameraMode::free)
+			{
+				FVector NewLocation = FreeCamera->GetComponentLocation() + CameraDirection * DeltaTime;
+				FreeCamera->SetWorldLocation(NewLocation);
+				CameraDirection = FVector::ZeroVector;
+			}
+		}
+
 
 	if (!FMath::IsNearlyZero(AngRoll) || !FMath::IsNearlyZero(AngYaw))
 	{
-		float NewRoll, NewYaw;
-		//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator();								// Rotacao relativa ao objeto base
-		FRotator Rot = CannonBarrel->GetComponentRotation();											// Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
-		NewRoll = FMath::ClampAngle(AngRoll + Rot.Roll, InitialAngleRoll - 90.0f, InitialAngleRoll);
-		NewYaw = Rot.Yaw - AngYaw;
-		NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
-		CannonBarrel->SetWorldRotation(NewTransform.Rotator());
+		if (Mode == CameraMode::muzzle)
+		{
+			float NewRoll, NewYaw;
+			//FRotator Rot = CannonBarrel->GetRelativeTransform().Rotator();								// Rotacao relativa ao objeto base
+			FRotator Rot = CannonBarrel->GetComponentRotation();											// Rotacao em relacao às coordenadas do mundo - nao em relacao ao objeto pai!
+			NewRoll = FMath::ClampAngle(AngRoll + Rot.Roll, InitialAngleRoll - 90.0f, InitialAngleRoll);
+			NewYaw = Rot.Yaw - AngYaw;
+			NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
+			CannonBarrel->SetWorldRotation(NewTransform.Rotator());
+		}
+		else if (Mode == CameraMode::free)
+		{
+			float NewPitch, NewYaw;
+			FRotator Rot = FreeCamera->GetComponentRotation();
+			if (Rot.Pitch >= 89.0f && AngRoll < 0.0f) AngRoll = 0.0f;
+			else if (Rot.Pitch <= -89.0f && AngRoll > 0.0f) AngRoll = 0.0f;
+			NewPitch = Rot.Pitch - AngRoll;
+			NewYaw = Rot.Yaw - AngYaw;
+			FreeCamera->SetWorldRotation(FTransform(FRotator(NewPitch, NewYaw, 0.0f)).Rotator());
+		}
 
 	}
 
@@ -104,8 +132,31 @@ void APlayerCannon::SetupPlayerInputComponent(class UInputComponent* InputCompon
 	InputComponent->BindAxis("BarrelRotationYaw", this, &APlayerCannon::MoveTurretYaw);
 	InputComponent->BindAction("CannonFire", IE_Pressed, this, &APlayerCannon::BeginFire);
 	InputComponent->BindAction("CannonFire", IE_Released, this, &APlayerCannon::EndFire);
+	InputComponent->BindAction("ToggleCamera", IE_Pressed, this, &APlayerCannon::ToggleCamera);
 
 
+}
+
+
+void APlayerCannon::ToggleCamera()
+{
+	if (Mode == CameraMode::free)
+	{
+		Mode = CameraMode::muzzle;
+		SpringArm->SetRelativeLocation(FVector(0.0f, -250.0f, -70.0f));
+		SpringArm->SetRelativeRotation(FRotator(165.0f, 90.0f, 0.0f));
+		FreeCamera->Deactivate();
+		OurCamera->Activate();
+		GEngine->AddOnScreenDebugMessage(-1, 0.14f, FColor::Yellow, "Muzzle");
+	}
+	else if (Mode == CameraMode::muzzle)
+	{
+		Mode = CameraMode::free;
+		OurCamera->Deactivate();
+		FreeCamera->Activate();
+		FreeCamera->SetWorldTransform(OurCamera->GetComponentTransform());
+		GEngine->AddOnScreenDebugMessage(-1, 0.14f, FColor::Yellow, "Free");
+	}
 }
 
 void APlayerCannon::MoveZ(float AxisValue)
@@ -116,27 +167,20 @@ void APlayerCannon::MoveZ(float AxisValue)
 	}
 	else if (Mode == CameraMode::free)
 	{
-		CameraDirection += GetActorUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
+		CameraDirection += FreeCamera->GetUpVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 3000.0f;
 	}
-	else
-	{
 
-	}
 }
 
 void APlayerCannon::MoveY(float AxisValue)
 {
-	if (Mode == CameraMode::muzzle)
+	if(Mode == CameraMode::muzzle)
 	{
 		CameraDirection += CannonBarrel->GetForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
 	}
 	else if (Mode == CameraMode::free)
 	{
-		CameraDirection += GetActorRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1000.0f;
-	}
-	else
-	{
-
+		CameraDirection += FreeCamera->GetRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 3000.0f;
 	}
 }
 
@@ -144,29 +188,25 @@ void APlayerCannon::Zoom(float AxisValue)
 {
 	if (Mode == CameraMode::muzzle)
 	{
-		CameraDirection += CannonBarrel->GetRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -6000.0f;
+		CameraDirection += CannonBarrel->GetRightVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * -1000.0f;
 	}
 	else if (Mode == CameraMode::free)
 	{
-		CameraDirection += GetActorForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 6000.0f;
-	}
-	else
-	{
-
+		CameraDirection += FreeCamera->GetForwardVector() * FMath::Clamp(AxisValue, -1.0f, 1.0f) * 3000.0f;
 	}
 }
 
 void APlayerCannon::MoveTurretRoll(float AxisValue)
 {
-	AngRoll = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
-	DisplayedAng = FMath::Clamp(DisplayedAng - AngRoll, 0.0f, 90.0f);
-	//GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(CannonBarrel->GetComponentRotation().Roll)));
-	GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(DisplayedAng)));
+		AngRoll = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 1.0f;
+		DisplayedAng = FMath::Clamp(DisplayedAng - AngRoll, 0.0f, 90.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(DisplayedAng)));
+
 }
 
 void APlayerCannon::MoveTurretYaw(float AxisValue)
 {
-	AngYaw = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2.0f;
+		AngYaw = -FMath::Clamp(AxisValue, -1.0f, 1.0f) * 2.0f;
 }
 
 void APlayerCannon::BeginFire()
