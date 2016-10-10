@@ -15,7 +15,7 @@ AHighTechPowerUp::AHighTechPowerUp()
 
 
 	Target = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Target"));
-	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> TargetObjectD(TEXT("/Game/castelo_DM")); // wherein /Game/ is the Content folder.
+	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> TargetObjectD(TEXT("/Game/Core_PowerUp_DM")); // wherein /Game/ is the Content folder.
 	Target->SetupAttachment(RootComponent);
 	Target->SetSimulatePhysics(true);
 	Target->SetEnableGravity(false);
@@ -25,7 +25,7 @@ AHighTechPowerUp::AHighTechPowerUp()
 
 
 	Protection = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Protection"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProtectionObject(TEXT("/Game/bala")); // wherein /Game/ is the Content folder.
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProtectionObject(TEXT("/Game/Periferal_PowerUp")); // wherein /Game/ is the Content folder.
 	Protection->SetupAttachment(Target);
 	Protection->SetStaticMesh(ProtectionObject.Object);
 	Protection->SetSimulatePhysics(true);
