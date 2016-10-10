@@ -175,7 +175,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	Destroy();
 	}*/
 
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "LALALALALLALAL");
 		if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))

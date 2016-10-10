@@ -17,8 +17,6 @@ AHighTechPowerUp::AHighTechPowerUp()
 	Target = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Target"));
 	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> TargetObjectD(TEXT("/Game/Core_PowerUp_DM")); // wherein /Game/ is the Content folder.
 	Target->SetupAttachment(RootComponent);
-	Target->SetSimulatePhysics(true);
-	Target->SetEnableGravity(false);
 	Target->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Target->SetDestructibleMesh(TargetObjectD.Object);
 
@@ -28,8 +26,6 @@ AHighTechPowerUp::AHighTechPowerUp()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProtectionObject(TEXT("/Game/Periferal_PowerUp")); // wherein /Game/ is the Content folder.
 	Protection->SetupAttachment(Target);
 	Protection->SetStaticMesh(ProtectionObject.Object);
-	Protection->SetSimulatePhysics(true);
-	Protection->SetEnableGravity(false);
 	Protection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 
@@ -39,7 +35,10 @@ AHighTechPowerUp::AHighTechPowerUp()
 void AHighTechPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Target->SetSimulatePhysics(true);
+	Target->SetEnableGravity(false);
+	Protection->SetSimulatePhysics(true);
+	Protection->SetEnableGravity(false);
 }
 
 // Called every frame
