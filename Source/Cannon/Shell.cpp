@@ -3,6 +3,7 @@
 #include "Cannon.h"
 #include "Shell.h"
 #include "Castle.h"
+#include "HighTechPowerUp.h"
 #include "EngineUtils.h" 
 
 float AShell::DamageZone;
@@ -173,4 +174,18 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 	Destroy();
 	}*/
+
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "LALALALALLALAL");
+		if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "WTF2");
+			for (UActorComponent* Component : OtherActor->GetComponents())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
+			}
+
+		}
+	}
 }
