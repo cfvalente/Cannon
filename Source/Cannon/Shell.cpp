@@ -177,11 +177,27 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "AHighTechPowerUp atingido");
 		if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
 		{
-			for (UActorComponent* Component : OtherActor->GetComponents())
+			GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Target atingido");
+			//OtherComp->SetEnableGravity(true);
+
+			for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
+				// Access the subclass instance with the * or -> operators.
+				UDestructibleComponent *Component = *Itr;
+				//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+
+				if (Component)
+				{
+					Component->AddRadialImpulse(GetActorLocation(), 800.0f, 1200.0f, ERadialImpulseFalloff::RIF_Linear, true);
+					Component->ApplyRadiusDamage(1000000020040877342720.0f, GetActorLocation(), 100.0f, 2, 1);
+				}
+			}
+			//for (UActorComponent* Component : OtherActor->GetComponents())
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
 			}
 
 		}

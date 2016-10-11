@@ -35,9 +35,9 @@ AHighTechPowerUp::AHighTechPowerUp()
 void AHighTechPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
-	Target->SetSimulatePhysics(true);
+	//Target->SetSimulatePhysics(true);
 	Target->SetEnableGravity(false);
-	Protection->SetSimulatePhysics(true);
+	//Protection->SetSimulatePhysics(true);
 	Protection->SetEnableGravity(false);
 }
 
