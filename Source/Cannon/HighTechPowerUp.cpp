@@ -20,14 +20,13 @@ AHighTechPowerUp::AHighTechPowerUp()
 	Target->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Target->SetDestructibleMesh(TargetObjectD.Object);
 
+	//
 
-
-	Protection = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Protection"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProtectionObject(TEXT("/Game/Periferal_PowerUp")); // wherein /Game/ is the Content folder.
+	Protection = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Protection"));
+	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> ProtectionObjectD(TEXT("/Game/Periferal_PowerUp_DM")); // wherein /Game/ is the Content folder.
 	Protection->SetupAttachment(RootComponent);
-	Protection->SetStaticMesh(ProtectionObject.Object);
 	Protection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	//Protection->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	Protection->SetDestructibleMesh(ProtectionObjectD.Object);
 	
 }
 

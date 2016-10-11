@@ -22,7 +22,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Target;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Protection;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Protection;
 
 
 };
