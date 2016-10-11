@@ -114,7 +114,7 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 	this->Location = Location + this->Transform.TransformVector(FVector(0.0f, 333.0f, 0.0f));
 	SetActorLocation(this->Location);
 
-	ExplosionEffect->SetRelativeScale3D(FVector(DamageZone / 80, DamageZone / 80, DamageZone / 80));
+	ExplosionEffect->SetRelativeScale3D(FVector(DamageZone / 8, DamageZone / 8, DamageZone / 8));
 }
 
 
@@ -177,10 +177,8 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "LALALALALLALAL");
 		if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "WTF2");
 			for (UActorComponent* Component : OtherActor->GetComponents())
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());

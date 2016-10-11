@@ -24,11 +24,11 @@ AHighTechPowerUp::AHighTechPowerUp()
 
 	Protection = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Protection"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProtectionObject(TEXT("/Game/Periferal_PowerUp")); // wherein /Game/ is the Content folder.
-	Protection->SetupAttachment(Target);
+	Protection->SetupAttachment(RootComponent);
 	Protection->SetStaticMesh(ProtectionObject.Object);
 	Protection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-
+	//Protection->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	
 }
 
 // Called when the game starts or when spawned
