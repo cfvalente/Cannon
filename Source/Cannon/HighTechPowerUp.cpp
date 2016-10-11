@@ -19,8 +19,7 @@ AHighTechPowerUp::AHighTechPowerUp()
 	Target->SetupAttachment(RootComponent);
 	Target->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Target->SetDestructibleMesh(TargetObjectD.Object);
-
-	//
+	Target->SetEnableGravity(false);
 
 	Protection = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Protection"));
 	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> ProtectionObjectD(TEXT("/Game/Periferal_PowerUp_DM")); // wherein /Game/ is the Content folder.
@@ -28,16 +27,14 @@ AHighTechPowerUp::AHighTechPowerUp()
 	Protection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Protection->SetDestructibleMesh(ProtectionObjectD.Object);
 	
+
 }
 
 // Called when the game starts or when spawned
 void AHighTechPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
-	//Target->SetSimulatePhysics(true);
 	Target->SetEnableGravity(false);
-	//Protection->SetSimulatePhysics(true);
-	Protection->SetEnableGravity(false);
 }
 
 // Called every frame

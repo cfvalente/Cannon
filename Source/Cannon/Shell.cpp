@@ -122,83 +122,86 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 
 void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
+	if(OtherComp->GetName() != "Protection")
 	{
-		// Access the subclass instance with the * or -> operators.
-		UStaticMeshComponent *Component = *Itr;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
-
-		if (Component)
+		for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 		{
-			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
-		}
-	}
+			// Access the subclass instance with the * or -> operators.
+			UStaticMeshComponent *Component = *Itr;
+			//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
 
-	for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
-	{
-		// Access the subclass instance with the * or -> operators.
-		UDestructibleComponent *Component = *Itr;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
-
-		if (Component)
-		{
-			//Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
-			//Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
-			Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
-			Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
-		}
-	}
-
-	/*
-	DamageZone = DamageZone + 100.0f;
-	DamageStrength = DamageStrength + 10000.0f;
-	PushZone = PushZone + 100.0f;
-	PushStrength = PushStrength + 100.0f;
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "DamageZone=" + FString::SanitizeFloat(DamageZone));
-	*/
-	ExplosionEffect->Activate(true);
-
-
-	this->timetodie = true;
-	//Destroy();
-	SmokeEffect->Deactivate();
-	Shell->SetVisibility(false);
-	SetActorEnableCollision(false);
-	ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
-
-
-	// Only add impulse and destroy projectile if we hit a physics
-	/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
-	{
-	OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-	Destroy();
-	}*/
-
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
-	{
-		if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Target atingido");
-			//OtherComp->SetEnableGravity(true);
-
-			for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
+			if (Component)
 			{
-				// Access the subclass instance with the * or -> operators.
-				UDestructibleComponent *Component = *Itr;
-				//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+				Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
+			}
+		}
 
-				if (Component)
+		for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
+		{
+			// Access the subclass instance with the * or -> operators.
+			UDestructibleComponent *Component = *Itr;
+			//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+
+			if (Component)
+			{
+				//Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+				//Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
+				Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
+				Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
+			}
+		}
+
+		/*
+		DamageZone = DamageZone + 100.0f;
+		DamageStrength = DamageStrength + 10000.0f;
+		PushZone = PushZone + 100.0f;
+		PushStrength = PushStrength + 100.0f;
+		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "DamageZone=" + FString::SanitizeFloat(DamageZone));
+		*/
+		ExplosionEffect->Activate(true);
+
+
+		this->timetodie = true;
+		//Destroy();
+		SmokeEffect->Deactivate();
+		Shell->SetVisibility(false);
+		SetActorEnableCollision(false);
+		ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
+
+
+		// Only add impulse and destroy projectile if we hit a physics
+		/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
+		{
+		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+
+		Destroy();
+		}*/
+
+		if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AHighTechPowerUp::StaticClass())))
+		{
+			if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Target atingido");
+				//OtherComp->SetEnableGravity(true);
+
+				for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
 				{
-					Component->AddRadialImpulse(GetActorLocation(), 800.0f, 1200.0f, ERadialImpulseFalloff::RIF_Linear, true);
-					Component->ApplyRadiusDamage(993402823346297367662189621542912.0f, GetActorLocation(), 100.0f, 2, 1);
-				}
-			}
-			//for (UActorComponent* Component : OtherActor->GetComponents())
-			{
-				//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
-			}
+					// Access the subclass instance with the * or -> operators.
+					UDestructibleComponent *Component = *Itr;
+					//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
 
+					if (Component)
+					{
+						Component->AddRadialImpulse(GetActorLocation(), 800.0f, 1200.0f, ERadialImpulseFalloff::RIF_Linear, true);
+						Component->ApplyRadiusDamage(993402823346297367662189621542912.0f, GetActorLocation(), 100.0f, 2, 1);
+					}
+				}
+				//for (UActorComponent* Component : OtherActor->GetComponents())
+				{
+					//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
+				}
+
+			}
 		}
 	}
 }
