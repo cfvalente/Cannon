@@ -50,6 +50,7 @@ public:
 	static float PushStrength;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* ExplosionEffect;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* ExplosionSound;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* SmokeEffect;
 	

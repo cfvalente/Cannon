@@ -39,6 +39,14 @@ AShell::AShell()
 	FireSound->bStopWhenOwnerDestroyed = false;
 	FireSound->Play(0.0f);
 
+	USoundWave *loadedExplosionSoundWave;
+	ExplosionSound = CreateDefaultSubobject<UAudioComponent>(TEXT("Explosion"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> ESound(TEXT("/Game/explosion"));
+	loadedExplosionSoundWave = ESound.Object;
+	ExplosionSound->SetSound(loadedExplosionSoundWave);
+	ExplosionSound->bStopWhenOwnerDestroyed = false;
+	ExplosionSound->bAutoActivate = false;
+
 
 	ExplosionEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("P_Explosion"));
 	ExplosionEffect->SetupAttachment(Shell);
@@ -122,6 +130,7 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 
 void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	ExplosionSound->Play(0.0f);
 	if(OtherComp->GetName() != "Protection")
 	{
 		for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
