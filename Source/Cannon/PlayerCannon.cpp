@@ -49,6 +49,8 @@ APlayerCannon::APlayerCannon()
 	Mode = CameraMode::muzzle;
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
+
+	displayAng = 0;
 }
 
 // Called when the game starts or when spawned
@@ -101,7 +103,7 @@ void APlayerCannon::Tick(float DeltaTime)
 			NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
 			CannonBarrel->SetWorldRotation(NewTransform.Rotator());
 
-			GEngine->AddOnScreenDebugMessage(-1, 0.015f, FColor::Yellow, "Angle=" + FString::FromInt(int(180.0f - NewRoll)));
+			displayAng = int(180.0f - NewRoll);
 		}
 		else if (Mode == CameraMode::free)
 		{

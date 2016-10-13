@@ -66,6 +66,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBarrel;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* CannonBody;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float displayAng;
 
 
 };
