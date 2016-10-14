@@ -1,0 +1,17 @@
+Colocar um som mistico quando a bala colidir com a protecao.
+
+Aumentar a velocidade de rotacao da camera com o mouse no modo de camera livre
+
+Fazer 3 power ups:
+-permitir quique da bala e somente explosao com comando do usuario.
+-nuke: ApplyRadiusDamage em area grande, seguido por uma serie de AddRadialImpulse com area cada vez maior.
+-missel teleguiado: mouse ou setinhas permitem mudar direcao da bala.
+
+
+
+
+
+
+
+
+Estah ok a explosao do alvo? ou ainda causa estranheza o fato das particulas do core poderem voar na direcao de onde veio a explosao?
