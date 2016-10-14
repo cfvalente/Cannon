@@ -20,6 +20,7 @@ AHighTechPowerUp::AHighTechPowerUp()
 	Target->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Target->SetDestructibleMesh(TargetObjectD.Object);
 	Target->SetEnableGravity(false);
+	Target->SetRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
 
 	Protection = CreateDefaultSubobject<UDestructibleComponent>(TEXT("Protection"));
 	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> ProtectionObjectD(TEXT("/Game/Periferal_PowerUp_DM")); // wherein /Game/ is the Content folder.
