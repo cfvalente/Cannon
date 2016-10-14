@@ -115,8 +115,8 @@ void APlayerCannon::Tick(float DeltaTime)
 			FRotator Rot = FreeCamera->GetComponentRotation();
 			if (Rot.Pitch >= 89.0f && AngRoll < 0.0f) AngRoll = 0.0f;
 			else if (Rot.Pitch <= -89.0f && AngRoll > 0.0f) AngRoll = 0.0f;
-			NewPitch = Rot.Pitch - AngRoll;
-			NewYaw = Rot.Yaw - AngYaw;
+			NewPitch = Rot.Pitch - 1.5f * AngRoll;
+			NewYaw = Rot.Yaw - 1.5f * AngYaw;
 			FreeCamera->SetWorldRotation(FTransform(FRotator(NewPitch, NewYaw, 0.0f)).Rotator());
 		}
 
