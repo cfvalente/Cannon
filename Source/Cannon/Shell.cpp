@@ -56,6 +56,14 @@ AShell::AShell()
 	if (P_Explosion.Succeeded())
 		ExplosionEffect->SetTemplate(P_Explosion.Object);
 
+	ExplosionProtEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("P_ExplosionProt"));
+	ExplosionProtEffect->SetupAttachment(Shell);
+	ExplosionProtEffect->bAutoActivate = false;
+	ExplosionProtEffect->SetRelativeLocation(this->Location);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_ExplosionProt(TEXT("/Game/StarterContent/Particles/P_ExplosionProt.P_ExplosionProt"));
+	if (P_ExplosionProt.Succeeded())
+		ExplosionProtEffect->SetTemplate(P_ExplosionProt.Object);
+
 	SmokeEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Smoke"));
 	SmokeEffect->SetupAttachment(Shell);
 	SmokeEffect->SetRelativeLocation(this->Location);
@@ -131,7 +139,23 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	ExplosionSound->Play(0.0f);
-	if(OtherComp->GetName() != "Protection")
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AShell::StaticClass())))
+	{
+		ExplosionEffect->Activate(true);
+		this->timetodie = true;
+		SmokeEffect->Deactivate();
+		Shell->SetVisibility(false);
+		Shell->SetEnableGravity(false);
+		ProjectileMovement->Velocity = FVector(0.0f, 0.0f, 0.0f);
+		SetActorEnableCollision(false);
+		AShell *AS = Cast<AShell>(OtherActor);
+		if (AS != NULL)
+		{
+			AS->SetActorEnableCollision(false);
+			AS->Destroy();
+		}
+	}
+	else if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherComp->GetName() != "Protection"))
 	{
 		for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 		{
@@ -175,9 +199,9 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 		SmokeEffect->Deactivate();
 		Shell->SetVisibility(false);
 		SetActorEnableCollision(false);
-		ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
+		ProjectileMovement->Velocity = FVector(0.0f, 0.0f, 0.0f);
 
-
+		
 		// Only add impulse and destroy projectile if we hit a physics
 		/*if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && !(OtherActor->IsA(ACastle::StaticClass())))
 		{
@@ -190,7 +214,6 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 		{
 			if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Target atingido");
 				//OtherComp->SetEnableGravity(true);
 
 				for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
@@ -205,12 +228,23 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 						Component->ApplyRadiusDamage(993402823346297367662189621542912.0f, GetActorLocation(), 100.0f, 2, 1);
 					}
 				}
+				/*
 				//for (UActorComponent* Component : OtherActor->GetComponents())
 				{
 					//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
-				}
+				}*/
 
 			}
+
 		}
+	}
+	else
+	{
+		ExplosionProtEffect->Activate(true);
+		this->timetodie = true;
+		SmokeEffect->Deactivate();
+		Shell->SetVisibility(false);
+		SetActorEnableCollision(false);
+		ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
 	}
 }

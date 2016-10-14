@@ -50,7 +50,6 @@ APlayerCannon::APlayerCannon()
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
 
-	displayAng = 0;
 }
 
 // Called when the game starts or when spawned
@@ -60,12 +59,16 @@ void APlayerCannon::BeginPlay()
 
 	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
 	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
-	Super::BeginPlay();
+	displayAng = 0.0f;
+
 
 	AShell::DamageZone = 10.0f;
 	AShell::DamageStrength = 100.0f;
 	AShell::PushZone = 10.0f;
 	AShell::PushStrength = 10.0f;
+
+
+	Super::BeginPlay();
 }
 
 // Called every frame
@@ -103,7 +106,8 @@ void APlayerCannon::Tick(float DeltaTime)
 			NewTransform = FTransform(FRotator(Rot.Pitch, NewYaw, NewRoll));
 			CannonBarrel->SetWorldRotation(NewTransform.Rotator());
 
-			displayAng = int(180.0f - NewRoll);
+			displayAng = 180.0f - NewRoll;
+			if (displayAng > 180.0f) displayAng = displayAng - 360.0f;
 		}
 		else if (Mode == CameraMode::free)
 		{
