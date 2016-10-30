@@ -1,14 +1,15 @@
-Colocar um som mistico quando a bala colidir com a protecao.
+	Colocar um som mistico quando a bala colidir com a protecao.
 
-Ideias de power ups:
--permitir quique da bala e somente explosao com comando do usuario.
--nuke: ApplyRadiusDamage em area grande, seguido por uma serie de AddRadialImpulse com area cada vez maior.
--missel teleguiado: mouse ou setinhas permitem mudar direcao da bala. com talvez uma camera em 3era pessoa.
--define angulo e direcao do tiro. Camera pula para lateral(estilo 2D, bem angry birds). Define forca do tiro. Proximo comando de tiro, faz com q o projetil libere uma bomba, queparabûlar até o chao.
+	Ideias de power ups:
+	-permitir quique da bala e somente explosao com comando do usuario.
+	-nuke: ApplyRadiusDamage em area grande, seguido por uma serie de AddRadialImpulse com area cada vez maior.
+	-missel teleguiado: mouse ou setinhas permitem mudar direcao da bala. com talvez uma camera em 3era pessoa.
+	-define angulo e direcao do tiro. Camera pula para lateral(estilo 2D, bem angry birds). Define forca do tiro. Proximo comando de tiro, faz com q o projetil libere uma bomba, queparabûlar até o chao.
+	-A fumaça pode atrapalhar, logo acho uma boa ideia criar um power up que mude a fumaça.
 
-Ajustar explosao do Powerup: Estah ok a explosao do alvo? ou ainda causa estranheza o fato das particulas do core poderem voar na direcao de onde veio a explosao?
+	Ajustar explosao do Powerup: Está ok a explosao do alvo? ou ainda causa estranheza o fato das particulas do core poderem voar na direcao de onde veio a explosao?
 
-Permitir ao player mudar sensibilidade de mouse em cada modo de camera?
+	Permitir ao player mudar sensibilidade de mouse em cada modo de camera?
 
-Adicionar arvores ao cenario??
+	Adicionar arvores ao cenario??
 
