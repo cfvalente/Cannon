@@ -83,6 +83,12 @@ AShell::AShell()
 	// Die after x seconds by default
 	InitialLifeSpan = 60.0f;
 
+	// Initial explosion parameters
+	PushZone = 800.0f;
+	PushStrength = 1200.0f;
+	DamageStrength = 38000.0f;
+	DamageZone = 1700.0f;
+	Nukecycle = 0;
 }
 
 // Called when the game starts or when spawned
@@ -103,13 +109,10 @@ void AShell::Tick(float DeltaTime)
 	if (this->timetodie)
 		this->lifetime += DeltaTime;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(lifetime));
-
 	if (this->lifetime >= 8.0f)
 	{
 		Destroy();
 		this->timetodie = false;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, FString::SanitizeFloat(DamageZone - DamageZone));
 	}
 }
 
@@ -130,7 +133,7 @@ void AShell::Init(FVector Location, float speed, FTransform Transform)
 	this->Location = Location + this->Transform.TransformVector(FVector(0.0f, 333.0f, 0.0f));
 	SetActorLocation(this->Location);
 
-	ExplosionEffect->SetRelativeScale3D(FVector(DamageZone / 8, DamageZone / 8, DamageZone / 8));
+	ExplosionEffect->SetRelativeScale3D(FVector(PushZone / 230.0f, PushZone / 230.0f, PushZone / 230.0f));
 }
 
 
@@ -157,40 +160,8 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	}
 	else if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherComp->GetName() != "Protection"))
 	{
-		for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
-		{
-			// Access the subclass instance with the * or -> operators.
-			UStaticMeshComponent *Component = *Itr;
-			//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
-
-			if (Component)
-			{
-				Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
-			}
-		}
-
-		for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
-		{
-			// Access the subclass instance with the * or -> operators.
-			UDestructibleComponent *Component = *Itr;
-			//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
-
-			if (Component)
-			{
-				//Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
-				//Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
-				Component->AddRadialImpulse(GetActorLocation(), 800, 1200, ERadialImpulseFalloff::RIF_Linear, true);
-				Component->ApplyRadiusDamage(36000, GetActorLocation(), 1700, 2, 1);
-			}
-		}
-
-		/*
-		DamageZone = DamageZone + 100.0f;
-		DamageStrength = DamageStrength + 10000.0f;
-		PushZone = PushZone + 100.0f;
-		PushStrength = PushStrength + 100.0f;
-		GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "DamageZone=" + FString::SanitizeFloat(DamageZone));
-		*/
+		AShell::RegularExplosion(PushZone, PushStrength, DamageStrength, DamageZone);
+		//GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.5f, false); //triggers the NUKE after a delay
 		ExplosionEffect->Activate(true);
 
 
@@ -224,7 +195,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 
 					if (Component)
 					{
-						Component->AddRadialImpulse(GetActorLocation(), 800.0f, 1200.0f, ERadialImpulseFalloff::RIF_Linear, true);
+						Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
 						Component->ApplyRadiusDamage(993402823346297367662189621542912.0f, GetActorLocation(), 100.0f, 2, 1);
 					}
 				}
@@ -247,4 +218,47 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 		SetActorEnableCollision(false);
 		ProjectileMovement->Velocity = this->Transform.TransformVector(FVector(0.0f, 0.0f, 0.0f));
 	}
+}
+
+
+
+void AShell::RegularExplosion(float PushZone, float PushStrength, float DamageStrength, float DamageZone)
+{
+	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
+	{
+		// Access the subclass instance with the * or -> operators.
+		UStaticMeshComponent *Component = *Itr;
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+
+		if (Component)
+		{
+			Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+		}
+	}
+
+	for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
+	{
+		// Access the subclass instance with the * or -> operators.
+		UDestructibleComponent *Component = *Itr;
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Itr->GetName());
+
+		if (Component)
+		{
+			Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+			Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
+		}
+	}
+}
+
+void AShell::NukeTimerEnd()
+{
+	Nukecycle = Nukecycle + 1;
+	if (Nukecycle<40)
+	{
+		AShell::RegularExplosion(PushZone + 80.0f*Nukecycle, PushStrength + 80.0f*Nukecycle, DamageStrength + 80.0f*Nukecycle, DamageZone + 80.0f*Nukecycle);
+		GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.1f/ float(Nukecycle), false);
+		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Nukecycle=" + FString::FromInt(Nukecycle));
+	}
+	
+
 }

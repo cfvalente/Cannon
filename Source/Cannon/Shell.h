@@ -16,11 +16,17 @@ private:
 	FTransform Transform;
 	bool timetodie;
 	float lifetime;
+	int Nukecycle;
 
 	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
 	
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION()
+		void RegularExplosion(float PushZone, float PushStrength, float DamageStrength, float DamageZone);
+
+	FTimerHandle NukeDelay;
 
 public:	
 	// Sets default values for this actor's properties
@@ -55,5 +61,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* SmokeEffect;
 	
+	UFUNCTION()
+	void NukeTimerEnd();
 	
 };
