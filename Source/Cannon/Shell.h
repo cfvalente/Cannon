@@ -16,6 +16,8 @@ private:
 	FTransform Transform;
 	bool timetodie;
 	float lifetime;
+	bool HTShell;
+	bool NukeShell;
 	int Nukecycle;
 
 	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
@@ -38,7 +40,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	void Init(FVector Location, float speed, FTransform Transform);
+	void Init(FVector Location, float speed, bool HTShell, bool NukeShell, FTransform Transform);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;

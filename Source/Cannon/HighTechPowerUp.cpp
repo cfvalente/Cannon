@@ -34,6 +34,16 @@ AHighTechPowerUp::AHighTechPowerUp()
 // Called when the game starts or when spawned
 void AHighTechPowerUp::BeginPlay()
 {
+	for (TObjectIterator<APawn> Itr; Itr; ++Itr)
+	{
+		// Access the subclass instance with the * or -> operators.
+		APawn *Pawn = *Itr;
+		if (Pawn->IsA(APlayerCannon::StaticClass()))
+		{
+			class APlayerCannon *PlayerCannon = Cast<APlayerCannon>(Pawn);
+			this->del = PlayerCannon->del;
+		}
+	}
 	Super::BeginPlay();
 	Target->SetEnableGravity(false);
 }
@@ -45,3 +55,7 @@ void AHighTechPowerUp::Tick(float DeltaTime)
 
 }
 
+void AHighTechPowerUp::Hit()
+{
+	this->del.Broadcast();
+}

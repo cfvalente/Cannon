@@ -116,13 +116,14 @@ void AShell::Tick(float DeltaTime)
 	}
 }
 
-void AShell::Init(FVector Location, float speed, FTransform Transform)
+void AShell::Init(FVector Location, float speed, bool HTShell, bool NukeShell, FTransform Transform)
 {
 	FVector SpeedVec;
 	this->Transform = FTransform(FRotator(Transform.Rotator().Pitch, Transform.Rotator().Yaw, Transform.Rotator().Roll - 180.0f));
 	Shell->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	//this->Transform = FTransform(FRotator(0.0f, 45.0f, 0.0f));
-
+	this->HTShell = HTShell;
+	this->NukeShell = NukeShell;
 
 	SetActorTransform(this->Transform);
 
@@ -161,7 +162,7 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	else if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherComp->GetName() != "Protection"))
 	{
 		AShell::RegularExplosion(PushZone, PushStrength, DamageStrength, DamageZone);
-		//GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.5f, false); //triggers the NUKE after a delay
+		if(HTShell) GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.5f, false); //triggers the NUKE after a delay
 		ExplosionEffect->Activate(true);
 
 
@@ -186,7 +187,9 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 			if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
 			{
 				//OtherComp->SetEnableGravity(true);
-
+				// LIGAR del do playercannon aqui
+				AHighTechPowerUp *HT = Cast<AHighTechPowerUp>(OtherActor);
+				HT->Hit();
 				for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
 				{
 					// Access the subclass instance with the * or -> operators.

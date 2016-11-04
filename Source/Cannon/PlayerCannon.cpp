@@ -50,6 +50,8 @@ APlayerCannon::APlayerCannon()
 	CountingTime = false;
 	CameraDirection = FVector(0.0f, 0.0f, 0.0f);
 
+
+
 }
 
 // Called when the game starts or when spawned
@@ -60,14 +62,14 @@ void APlayerCannon::BeginPlay()
 	InitialAngleRoll = CannonBarrel->GetComponentRotation().Roll;
 	InitialAngleYaw = CannonBarrel->GetComponentRotation().Yaw;
 	displayAng = 0.0f;
-
+	HTShell = NukeShell = false;
 
 	AShell::DamageZone = 10.0f;
 	AShell::DamageStrength = 100.0f;
 	AShell::PushZone = 10.0f;
 	AShell::PushStrength = 10.0f;
 
-
+	del.AddDynamic(this, &APlayerCannon::HTPowerUpHit);
 	Super::BeginPlay();
 }
 
@@ -75,7 +77,6 @@ void APlayerCannon::BeginPlay()
 void APlayerCannon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 
 		if (!CameraDirection.IsZero())
 		{
@@ -232,8 +233,17 @@ void APlayerCannon::EndFire()
 	{
 		// spawn the projectile at the muzzle
 		AShell* Shell = World->SpawnActor<AShell>(AShell::StaticClass());
-		Shell->Init(this->GetActorLocation(), Speed, NewTransform);
+		Shell->Init(this->GetActorLocation(), Speed, HTShell, NukeShell, NewTransform);
+		if (HTShell) HTShell = false;
 	}
 
 	ChargeTime = 0.0f;
+}
+
+
+void APlayerCannon::HTPowerUpHit()
+{
+	//PowerUp += 10000000.0f;
+	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "OK!!!!!!");
+	HTShell = true;
 }

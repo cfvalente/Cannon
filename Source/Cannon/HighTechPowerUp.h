@@ -4,6 +4,7 @@
 
 #include "Engine/DestructibleMesh.h"
 #include "GameFramework/Actor.h"
+#include "PlayerCannon.h"
 #include "HighTechPowerUp.generated.h"
 
 UCLASS()
@@ -24,5 +25,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Target;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Protection;
 
+	void Hit();
 
+	FHTPowerUpDelagate del;
 };

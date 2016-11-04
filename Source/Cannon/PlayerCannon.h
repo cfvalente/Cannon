@@ -7,6 +7,8 @@
 #include "PlayerCannon.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHTPowerUpDelagate);
+
 
 
 UCLASS()
@@ -21,6 +23,8 @@ private:
 	bool CountingTime;
 	float InitialAngleRoll;
 	float InitialAngleYaw;
+	bool HTShell;
+	bool NukeShell;
 
 	enum class CameraMode { muzzle, free };
 	CameraMode Mode;
@@ -41,6 +45,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+	FHTPowerUpDelagate del;
 
 
 	void MoveZ(float AxisValue);
@@ -51,6 +56,8 @@ public:
 	void BeginFire();
 	void EndFire();
 	void ToggleCamera();
+
+	UFUNCTION() void HTPowerUpHit();
 
 	//UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) UCameraComponent* OurCamera;
