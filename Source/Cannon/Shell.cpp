@@ -116,14 +116,12 @@ void AShell::Tick(float DeltaTime)
 	}
 }
 
-void AShell::Init(FVector Location, float speed, bool HTShell, bool NukeShell, FTransform Transform)
+void AShell::Init(FVector Location, float speed, FTransform Transform)
 {
 	FVector SpeedVec;
 	this->Transform = FTransform(FRotator(Transform.Rotator().Pitch, Transform.Rotator().Yaw, Transform.Rotator().Roll - 180.0f));
 	Shell->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	//this->Transform = FTransform(FRotator(0.0f, 45.0f, 0.0f));
-	this->HTShell = HTShell;
-	this->NukeShell = NukeShell;
 
 	SetActorTransform(this->Transform);
 
@@ -162,7 +160,6 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 	else if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherComp->GetName() != "Protection"))
 	{
 		AShell::RegularExplosion(PushZone, PushStrength, DamageStrength, DamageZone);
-		if(HTShell) GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.5f, false); //triggers the NUKE after a delay
 		ExplosionEffect->Activate(true);
 
 
@@ -251,17 +248,4 @@ void AShell::RegularExplosion(float PushZone, float PushStrength, float DamageSt
 			Component->ApplyRadiusDamage(DamageStrength, GetActorLocation(), DamageZone, 2, 1);
 		}
 	}
-}
-
-void AShell::NukeTimerEnd()
-{
-	Nukecycle = Nukecycle + 1;
-	if (Nukecycle<40)
-	{
-		AShell::RegularExplosion(PushZone + 80.0f*Nukecycle, PushStrength + 80.0f*Nukecycle, DamageStrength + 80.0f*Nukecycle, DamageZone + 80.0f*Nukecycle);
-		GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &AShell::NukeTimerEnd, 0.1f/ float(Nukecycle), false);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, "Nukecycle=" + FString::FromInt(Nukecycle));
-	}
-	
-
 }

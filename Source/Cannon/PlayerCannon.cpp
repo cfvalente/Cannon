@@ -2,6 +2,8 @@
 
 #include "Cannon.h"
 #include "Shell.h"
+#include "NukeShell.h"
+#include "HTShell.h"
 #include "PlayerCannon.h"
 
 
@@ -231,10 +233,21 @@ void APlayerCannon::EndFire()
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
+		AShell* Shell;
 		// spawn the projectile at the muzzle
-		AShell* Shell = World->SpawnActor<AShell>(AShell::StaticClass());
-		Shell->Init(this->GetActorLocation(), Speed, HTShell, NukeShell, NewTransform);
-		if (HTShell) HTShell = false;
+		if (NukeShell)
+		{
+			Shell = World->SpawnActor<ANukeShell>(ANukeShell::StaticClass());
+			HTShell = false;
+			NukeShell = false;
+		}
+		else if (HTShell)
+		{
+			Shell = World->SpawnActor<AHTShell>(AHTShell::StaticClass());
+		}
+		else Shell = World->SpawnActor<AShell>(AShell::StaticClass());
+		Shell->Init(this->GetActorLocation(), Speed, NewTransform);
+		
 	}
 
 	ChargeTime = 0.0f;
@@ -246,4 +259,5 @@ void APlayerCannon::HTPowerUpHit()
 	//PowerUp += 10000000.0f;
 	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "OK!!!!!!");
 	HTShell = true;
+	NukeShell = true;
 }

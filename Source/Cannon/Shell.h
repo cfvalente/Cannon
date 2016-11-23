@@ -10,23 +10,20 @@ class CANNON_API AShell : public AActor
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	FVector	Location;
 	FVector Speed;
 	FTransform Transform;
 	bool timetodie;
 	float lifetime;
-	bool HTShell;
-	bool NukeShell;
 	int Nukecycle;
 
-	FVector AShell::CustomAxisRotation(FVector vec, float degrees);
 	
 	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION()
-		void RegularExplosion(float PushZone, float PushStrength, float DamageStrength, float DamageZone);
+		virtual void RegularExplosion(float PushZone, float PushStrength, float DamageStrength, float DamageZone);
 
 	FTimerHandle NukeDelay;
 
@@ -40,7 +37,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	void Init(FVector Location, float speed, bool HTShell, bool NukeShell, FTransform Transform);
+	virtual void Init(FVector Location, float speed, FTransform Transform);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UStaticMeshComponent* Shell;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class USphereComponent* CollisionComponent;
@@ -62,8 +59,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UAudioComponent* ExplosionSound;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* SmokeEffect;
-	
-	UFUNCTION()
-	void NukeTimerEnd();
-	
+		
 };
