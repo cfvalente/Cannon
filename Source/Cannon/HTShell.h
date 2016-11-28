@@ -12,8 +12,13 @@ UCLASS()
 class CANNON_API AHTShell : public AShell
 {
 	GENERATED_BODY()
-	
-	
+
+
+private:
+
+
+public:
+	AHTShell();
 	
 	
 };

@@ -6,3 +6,9 @@
 
 
 
+
+AHTShell::AHTShell() : AShell::AShell()
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShelllObject(TEXT("/Game/balaHT")); // wherein /Game/ is the Content folder.
+	Shell->SetStaticMesh(ShelllObject.Object);
+}

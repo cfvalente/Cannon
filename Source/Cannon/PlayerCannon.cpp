@@ -72,6 +72,7 @@ void APlayerCannon::BeginPlay()
 	AShell::PushStrength = 10.0f;
 
 	del.AddDynamic(this, &APlayerCannon::HTPowerUpHit);
+	nuke_del.AddDynamic(this, &APlayerCannon::NukePowerUpHit);
 	Super::BeginPlay();
 }
 
@@ -238,7 +239,6 @@ void APlayerCannon::EndFire()
 		if (NukeShell)
 		{
 			Shell = World->SpawnActor<ANukeShell>(ANukeShell::StaticClass());
-			HTShell = false;
 			NukeShell = false;
 		}
 		else if (HTShell)
@@ -256,8 +256,11 @@ void APlayerCannon::EndFire()
 
 void APlayerCannon::HTPowerUpHit()
 {
-	//PowerUp += 10000000.0f;
-	GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Yellow, "OK!!!!!!");
 	HTShell = true;
+}
+
+
+void APlayerCannon::NukePowerUpHit()
+{
 	NukeShell = true;
 }

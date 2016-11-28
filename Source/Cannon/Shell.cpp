@@ -4,6 +4,7 @@
 #include "Shell.h"
 #include "Castle.h"
 #include "HighTechPowerUp.h"
+#include "NukePowerUp.h"
 #include "EngineUtils.h" 
 
 float AShell::DamageZone;
@@ -202,11 +203,29 @@ void AShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 				/*
 				//for (UActorComponent* Component : OtherActor->GetComponents())
 				{
-					//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
+				//GEngine->AddOnScreenDebugMessage(-1, 3.5f, FColor::Blue, Component->GetName());
 				}*/
 
 			}
 
+		}
+
+		else if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(ANukePowerUp::StaticClass())))
+		{
+			if (OtherComp->IsA<UDestructibleComponent>() && OtherComp->GetName().Equals("Target"))
+			{
+				ANukePowerUp *Nuk = Cast<ANukePowerUp>(OtherActor);
+				Nuk->Hit();
+				for (TObjectIterator<UDestructibleComponent> Itr; Itr; ++Itr)
+				{
+					UDestructibleComponent *Component = *Itr;
+					if (Component)
+					{
+						Component->AddRadialImpulse(GetActorLocation(), PushZone, PushStrength, ERadialImpulseFalloff::RIF_Linear, true);
+						Component->ApplyRadiusDamage(993402823346297367662189621542912.0f, GetActorLocation(), 100.0f, 2, 1);
+					}
+				}
+			}
 		}
 	}
 	else

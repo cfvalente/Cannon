@@ -27,7 +27,7 @@ protected:
 
 public:
 	// Sets default values for this actor's properties
-	ANukeShell() : AShell::AShell() {}
+	ANukeShell();
 	
 	
 };

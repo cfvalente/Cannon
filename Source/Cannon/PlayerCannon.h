@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHTPowerUpDelagate);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNukePowerUpDelagate);
+
 
 
 UCLASS()
@@ -46,7 +48,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	FHTPowerUpDelagate del;
-
+	FNukePowerUpDelagate nuke_del;
 
 	void MoveZ(float AxisValue);
 	void MoveY(float AxisValue);
@@ -58,6 +60,7 @@ public:
 	void ToggleCamera();
 
 	UFUNCTION() void HTPowerUpHit();
+	UFUNCTION() void NukePowerUpHit();
 
 	//UCameraComponent* OurCamera;
 	UPROPERTY(EditAnywhere) UCameraComponent* OurCamera;

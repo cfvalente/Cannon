@@ -25,7 +25,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Target;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UDestructibleComponent* Protection;
 
-	void Hit();
+	virtual void Hit();
 
 	FHTPowerUpDelagate del;
 };

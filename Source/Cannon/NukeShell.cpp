@@ -9,6 +9,13 @@
 
 
 
+ANukeShell::ANukeShell() : AShell::AShell()
+{
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShelllObject(TEXT("/Game/balaN")); // wherein /Game/ is the Content folder.
+	Shell->SetStaticMesh(ShelllObject.Object);
+}
+
+
 
 
 
