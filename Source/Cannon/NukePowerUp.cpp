@@ -28,7 +28,6 @@ ANukePowerUp::ANukePowerUp()
 	Protection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Protection->SetDestructibleMesh(ProtectionObjectD.Object);
 
-
 }
 
 

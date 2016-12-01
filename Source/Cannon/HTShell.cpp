@@ -15,13 +15,17 @@ AHTShell::AHTShell() : AShell::AShell()
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_Explosion(TEXT("/Game/StarterContent/Particles/P_HighTech.P_HighTech"));
 	if (P_Explosion.Succeeded())
 		ExplosionEffect->SetTemplate(P_Explosion.Object);
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_Smoke(TEXT("/Game/StarterContent/Particles/P_Steam_HT.P_Steam_HT"));
+	if (P_Smoke.Succeeded())
+		SmokeEffect->SetTemplate(P_Smoke.Object);
 	
 	ExplosionEffect->SetRelativeScale3D(FVector(5.0f, 5.0f, 5.0f));
 	
 	PushZone = 800.0f * 3.0f;
 	PushStrength = 1200.0f * 3.0f;
-	DamageStrength = 38000.0f * 3.0f;
-	DamageZone = 1700.0f * 3.0f;
+	DamageStrength = 38000.0f * 1.75f;
+	DamageZone = 1700.0f * 1.75f;
 }
 
 

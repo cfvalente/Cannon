@@ -22,6 +22,8 @@ ANukeShell::ANukeShell() : AShell::AShell()
 	if (P_Explosion.Succeeded())
 		NukeExplosionEffect->SetTemplate(P_Explosion.Object);
 	NukeExplosionEffect->SetRelativeScale3D(FVector(10.0f, 10.0f, 10.0f));
+
+	DamageStrength = 50000.0f;//38000.0f
 }
 
 
