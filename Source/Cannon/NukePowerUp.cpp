@@ -58,4 +58,6 @@ void ANukePowerUp::BeginPlay()
 void ANukePowerUp::Hit()
 {
 	this->nuke_del.Broadcast();
+	//UWorld* const World = GetWorld();
+	//UGameplayStatics::OpenLevel(World, FName(TEXT("Mapa2")));
 }
