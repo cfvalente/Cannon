@@ -20,5 +20,6 @@ private:
 public:
 	AHTShell();
 	
+	virtual void Init(FVector Location, float speed, FTransform Transform);
 	
 };

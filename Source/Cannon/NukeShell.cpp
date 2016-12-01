@@ -13,9 +13,16 @@ ANukeShell::ANukeShell() : AShell::AShell()
 {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShelllObject(TEXT("/Game/balaN")); // wherein /Game/ is the Content folder.
 	Shell->SetStaticMesh(ShelllObject.Object);
+
+	NukeExplosionEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("P_Nuke"));
+	NukeExplosionEffect->SetupAttachment(Shell);
+	NukeExplosionEffect->bAutoActivate = false;
+	NukeExplosionEffect->SetRelativeLocation(this->Location);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_Explosion(TEXT("/Game/StarterContent/Particles/P_Nuke.P_Nuke"));
+	if (P_Explosion.Succeeded())
+		NukeExplosionEffect->SetTemplate(P_Explosion.Object);
+	NukeExplosionEffect->SetRelativeScale3D(FVector(10.0f, 10.0f, 10.0f));
 }
-
-
 
 
 
@@ -24,7 +31,7 @@ void ANukeShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 	ExplosionSound->Play(0.0f);
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && (OtherActor->IsA(AShell::StaticClass())))
 	{
-		ExplosionEffect->Activate(true);
+		NukeExplosionEffect->Activate(true);
 		this->timetodie = true;
 		SmokeEffect->Deactivate();
 		Shell->SetVisibility(false);
@@ -42,7 +49,7 @@ void ANukeShell::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 	{
 		ANukeShell::RegularExplosion(PushZone, PushStrength, DamageStrength, DamageZone);
 		GetWorld()->GetTimerManager().SetTimer(NukeDelay, this, &ANukeShell::NukeTimerEnd, 0.5f, false); //triggers the NUKE after a delay
-		ExplosionEffect->Activate(true);
+		NukeExplosionEffect->Activate(true);
 
 
 		this->timetodie = true;

@@ -28,6 +28,8 @@ protected:
 public:
 	// Sets default values for this actor's properties
 	ANukeShell();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) class UParticleSystemComponent* NukeExplosionEffect;
 	
 	
 };
