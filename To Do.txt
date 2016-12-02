@@ -1,3 +1,20 @@
+Adicionar blocos objetivo a serem quebrados.
+Impor limite de tiros -> you lose, mas que permite continuar brincando no cenário.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	Colocar um som mistico quando a bala colidir com a protecao.
 
 	Ideias de power ups:
